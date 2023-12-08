@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.capstone.nutrizen.activity.login.LoginViewModel
 import com.capstone.nutrizen.activity.register.RegisterViewModel
+import com.capstone.nutrizen.ui.screen.profile.ProfileViewModel
 
 
 class ViewModelFactory(private val repository: Repository) : ViewModelProvider.NewInstanceFactory() {
@@ -17,6 +18,9 @@ class ViewModelFactory(private val repository: Repository) : ViewModelProvider.N
             }
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> {
                 RegisterViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
+                ProfileViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
