@@ -3,6 +3,7 @@ package com.capstone.nutrizen.data
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.capstone.nutrizen.activity.dataform.FormViewModel
 import com.capstone.nutrizen.activity.login.LoginViewModel
 import com.capstone.nutrizen.activity.register.RegisterViewModel
 import com.capstone.nutrizen.ui.screen.profile.ProfileViewModel
@@ -21,6 +22,9 @@ class ViewModelFactory(private val repository: Repository) : ViewModelProvider.N
             }
             modelClass.isAssignableFrom(ProfileViewModel::class.java) -> {
                 ProfileViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(FormViewModel::class.java) -> {
+                FormViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }

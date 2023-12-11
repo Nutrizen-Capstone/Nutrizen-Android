@@ -1,4 +1,4 @@
-package com.capstone.nutrizen.activity.login
+package com.capstone.nutrizen.activity.dataform
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -13,32 +13,33 @@ import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
-class LoginViewModel(private val repository: Repository) : ViewModel() {
+
+class FormViewModel(private val repository: Repository) : ViewModel() {
 
     companion object {
-        private const val TAG = "LoginViewModel"
+        private const val TAG = "DataViewModel"
     }
 
-    private val _loginResponse = MutableLiveData<LoginResponse>()
-    val loginResponse: LiveData<LoginResponse> = _loginResponse
+    // sementara sebelum dapat endpoint numpang endoint dicoding
+    private val _formResponse = MutableLiveData<LoginResponse>()
+    val FormResponse: LiveData<LoginResponse> = _formResponse
 
-    fun login(email: String, password: String) {
+    fun save(email: String, password: String,age:Int) {
         viewModelScope.launch {
             try {
                 //get success message
                 val response = repository.login(email, password)
-                _loginResponse.postValue(response)
+                _formResponse.postValue(response)
                 saveSession(
-                    // semuanya berdasarkan respose.data kecuali islogin =true
                     SessionModel(
                         response.loginResult.userId,
                         response.loginResult.name,
                         response.loginResult.token,
                         email,
                         true,
-                        false,
+                        true,
                         "example",
-                        0,
+                        age,
                         0,
                         0.0,
                         0.0,
@@ -52,7 +53,7 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                 val jsonInString = e.response()?.errorBody()?.string()
                 val errorBody = Gson().fromJson(jsonInString, LoginResponse::class.java)
                 val errorMessage = errorBody.message
-                _loginResponse.postValue(errorBody)
+                _formResponse.postValue(errorBody)
                 Log.d(TAG, "onError: $errorMessage")
             }
         }

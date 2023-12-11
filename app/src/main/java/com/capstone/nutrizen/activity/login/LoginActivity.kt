@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.R
+import com.capstone.nutrizen.activity.dataform.FormActivity
 import com.capstone.nutrizen.activity.main.MainActivity
 import com.capstone.nutrizen.activity.register.RegisterActivity
 import com.capstone.nutrizen.data.Injection
@@ -56,18 +57,16 @@ class LoginActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loginResponse.observe(this) {
-            if (it.error) {
-                Toast.makeText(this, "failed, "+it.message, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
-            }
-        }
+
         viewModel.getSession().observe(this) { user ->
-            if (user.isLogin) {
+            if (user.isLogin && user.isDataCompleted) {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
-            } else {
+            } else if (user.isLogin==true && user.isDataCompleted==false){
+                startActivity(Intent(this, FormActivity::class.java))
+                finish()
+            }
+            else {
                 setContent {
                     NutrizenTheme {
                         // A surface container using the 'background' color from the theme
@@ -79,6 +78,14 @@ class LoginActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+
+        viewModel.loginResponse.observe(this) {
+            if (it.error) {
+                Toast.makeText(this, "failed, "+it.message, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
             }
         }
     }

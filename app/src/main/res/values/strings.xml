@@ -47,4 +47,7 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="date">date picker\n</string>
+    <string name="form_birathDate">Birth Date\n</string>
+    <string name="form_age">Age</string>
 </resources>

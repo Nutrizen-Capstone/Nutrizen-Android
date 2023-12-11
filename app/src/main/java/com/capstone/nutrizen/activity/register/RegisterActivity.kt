@@ -124,7 +124,7 @@ fun RegisterPage(
         val password2 = remember { mutableStateOf(TextFieldValue()) }
         var errorpassword by remember { mutableStateOf(false) }
         var errorpassword2 by remember { mutableStateOf(false) }
-        var errorusername by remember { mutableStateOf(false) }
+        var errorusername by remember{ mutableStateOf(false) }
         var isPasswordVisible by remember { mutableStateOf(false) }
         val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -268,7 +268,7 @@ fun RegisterPage(
                             password.value.text
                         )
                     } else
-                        Toast.makeText(mContext, "Failed, fill it carefully", Toast.LENGTH_SHORT)
+                        Toast.makeText(mContext, "Failed, fill it carefully ${username}", Toast.LENGTH_SHORT)
                             .show()
                 },
                 shape = RoundedCornerShape(50.dp),
