@@ -24,7 +24,17 @@ class FormViewModel(private val repository: Repository) : ViewModel() {
     private val _formResponse = MutableLiveData<LoginResponse>()
     val FormResponse: LiveData<LoginResponse> = _formResponse
 
-    fun save(email: String, password: String,age:Int) {
+    fun save(
+        email: String,
+        password: String,
+        birthDate: String,
+        age: Int,
+        gender: Int,
+        height: Double,
+        weight: Double,
+        activity: Int,
+        goal: Int
+    ) {
         viewModelScope.launch {
             try {
                 //get success message
@@ -38,13 +48,13 @@ class FormViewModel(private val repository: Repository) : ViewModel() {
                         email,
                         true,
                         true,
-                        "example",
+                        birthDate,
                         age,
-                        0,
-                        0.0,
-                        0.0,
-                        0,
-                        0
+                        gender,
+                        height,
+                        weight,
+                        activity,
+                        goal
                     )
                 )
                 Log.d(TAG, "onSuccess: ${response.message}")

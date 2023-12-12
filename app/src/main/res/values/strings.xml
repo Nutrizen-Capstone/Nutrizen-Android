@@ -47,7 +47,12 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
-    <string name="date">date picker\n</string>
-    <string name="form_birathDate">Birth Date\n</string>
+    <string name="date">date picker</string>
+    <string name="form_birathDate">Birth Date</string>
     <string name="form_age">Age</string>
+    <string name="form_gender">Gender</string>
+    <string name="form_goal">Goal</string>
+    <string name="form_activity">Activity Level</string>
+    <string name="form_height">Height</string>
+    <string name="form_weight">Weight</string>
 </resources>

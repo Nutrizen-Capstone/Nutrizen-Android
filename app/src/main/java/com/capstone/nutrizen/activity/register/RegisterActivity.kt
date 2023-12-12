@@ -210,7 +210,7 @@ fun RegisterPage(
             value = password2.value,
             onValueChange = { password2.value = it },
             label = {
-                Text(text = "password")
+                Text(text = "confirm password")
             },
             trailingIcon = {
                 IconButton(onClick = {

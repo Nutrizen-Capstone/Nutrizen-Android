@@ -66,17 +66,31 @@ fun ProfileScreen(
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-           var birth :String?=null
+            var birth :String?=null
             var age :Int?=null
             var token:String?=null
+            var gender:Int?=null
+            var height:Double?=null
+            var weight:Double?=null
+            var activitys:Int?=null
+            var goal:Int?=null
             viewModel.getSession().observeAsState().value.let{its->
                 birth  = its?.birthDate
                 age  = its?.age
+                gender = its?.gender
+                height= its?.height
+                weight = its?.weight
+                activitys = its?.activity
+                goal = its?.goal
                 token = its?.token
-
             }
             Text(text = birth.toString())
             Text(text = age.toString())
+            Text(text = gender.toString())
+            Text(text = height.toString())
+            Text(text = weight.toString())
+            Text(text = activitys.toString())
+            Text(text = goal.toString())
             Text(text= token.toString())
             Spacer(modifier = Modifier.height(20.dp))
             Button(
