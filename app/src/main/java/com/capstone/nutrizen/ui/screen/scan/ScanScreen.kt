@@ -1,5 +1,8 @@
 package com.capstone.nutrizen.ui.screen.scan
 
+import android.content.Context
+import android.content.Intent
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,10 +22,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.capstone.nutrizen.R
+import com.capstone.nutrizen.activity.scan.ScanActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
+    context: Context,
+    activity: ComponentActivity,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -49,9 +55,9 @@ fun ScanScreen(
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Button(onClick = {   })
+            Button(onClick = { context.startActivity(Intent(context, ScanActivity::class.java))  })
             {
-                Text(text = "Logout")
+                Text(text = "Scan Activity")
             }
         }
     }

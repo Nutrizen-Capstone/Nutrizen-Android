@@ -28,10 +28,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.MilitaryTech
+import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.NaturePeople
-import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material.icons.filled.SportsMartialArts
+import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
@@ -119,7 +121,7 @@ fun FormPage(
 ) {
     val context = LocalContext.current
     val activity = (LocalLifecycleOwner.current as ComponentActivity)
-    var email: String? = null
+    var email: String?
     viewModel.getSession().observeAsState().value.let {
         email = it?.email
     }
@@ -130,12 +132,12 @@ fun FormPage(
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = "Personal Data Form",
+                    text = stringResource(id = R.string.app_name),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp,
                     textAlign = TextAlign.Center
                 )
             }
@@ -148,6 +150,16 @@ fun FormPage(
             horizontalAlignment = Alignment.Start
         ) {
             val keyboardController = LocalSoftwareKeyboardController.current
+
+            Text(
+                text = stringResource(id = R.string.form_title),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                fontWeight = FontWeight.Light,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
 
             // coba password
             val username = remember { mutableStateOf(TextFieldValue()) }
@@ -308,7 +320,7 @@ fun FormPage(
                         .width(55.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PeopleAlt,
+                        imageVector = Icons.Default.SupervisorAccount,
                         contentDescription = "icon",
                         modifier = modifier
                             .fillMaxSize()
@@ -353,7 +365,7 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
-            // height form
+            // #height form
             val height = remember { mutableStateOf(TextFieldValue()) }
             Row(
                 modifier = modifier,
@@ -371,7 +383,7 @@ fun FormPage(
                         .width(55.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PeopleAlt,
+                        imageVector = Icons.Default.Height,
                         contentDescription = "icon",
                         modifier = modifier
                             .fillMaxSize()
@@ -380,7 +392,13 @@ fun FormPage(
                 }
                 OutlinedTextField(
                     modifier = Modifier.width(150.dp),
-                    label = { Text(text = stringResource(id = R.string.form_height)) },
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.form_height),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(),
                     value = height.value,
                     onValueChange = { height.value = it },
                     maxLines = 1,
@@ -410,7 +428,7 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
-            // weight form
+            // #weight form
             val weight = remember { mutableStateOf(TextFieldValue()) }
             Row(
                 modifier = modifier,
@@ -428,7 +446,7 @@ fun FormPage(
                         .width(55.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PeopleAlt,
+                        imageVector = Icons.Default.MonitorWeight,
                         contentDescription = "icon",
                         modifier = modifier
                             .fillMaxSize()
@@ -437,7 +455,13 @@ fun FormPage(
                 }
                 OutlinedTextField(
                     modifier = Modifier.width(150.dp),
-                    label = { Text(text = stringResource(id = R.string.form_weight)) },
+                    label = {
+                        Text(
+                            text = stringResource(id = R.string.form_weight),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(),
                     value = weight.value,
                     onValueChange = { weight.value = it },
                     maxLines = 1,
@@ -459,7 +483,7 @@ fun FormPage(
 
                     ) {
                     Text(
-                        text = "cm",
+                        text = "Kg",
                         modifier = Modifier.align(Alignment.Center),
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -467,7 +491,7 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
-            // Activity dropdown menu
+            // #Activity dropdown menu
             val activitylist = arrayOf(
                 "Select",
                 "Little or no exercise",
@@ -549,7 +573,7 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
-            // Goal dropdown menu
+            // #Goal dropdown menu
             val goallist = arrayOf("Select", "Lose Weight", "Stable Weight", "Gain Weight")
             var expandedGoal by remember { mutableStateOf(false) }
             var selectedGoal by remember { mutableStateOf(goallist[0]) }
@@ -622,6 +646,11 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
+           /* var coffee : Int? = 0
+            dropdown(id = {
+                value: Int ->  coffee=value
+            })
+            */
 
             Spacer(modifier = Modifier.height(20.dp))
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {

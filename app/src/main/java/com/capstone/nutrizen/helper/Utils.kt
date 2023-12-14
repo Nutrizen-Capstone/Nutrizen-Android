@@ -1,5 +1,7 @@
 package com.capstone.nutrizen.helper
 
+import android.content.Context
+import java.io.File
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -20,4 +22,19 @@ fun Int.toMonthName(): String {
 fun Date.toFormattedString(): String {
     val simpleDateFormat = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
     return simpleDateFormat.format(this)
+}
+fun calculateBMR(w: Double, h: Double, age: Int, g: Int, a: Double):Double {
+    return   ((10 * w) + (6.25 * h) - (5 * age) + g )*a
+}
+
+fun Context.createImageFile(): File {
+    // Create an image file name
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    val imageFileName = "JPEG_" + timeStamp + "_"
+    val image = File.createTempFile(
+        imageFileName, /* prefix */
+        ".jpg", /* suffix */
+        externalCacheDir      /* directory */
+    )
+    return image
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.capstone.nutrizen.activity.dataform.FormViewModel
 import com.capstone.nutrizen.activity.login.LoginViewModel
 import com.capstone.nutrizen.activity.register.RegisterViewModel
+import com.capstone.nutrizen.ui.screen.home.HomeViewModel
 import com.capstone.nutrizen.ui.screen.profile.ProfileViewModel
 
 
@@ -25,6 +26,9 @@ class ViewModelFactory(private val repository: Repository) : ViewModelProvider.N
             }
             modelClass.isAssignableFrom(FormViewModel::class.java) -> {
                 FormViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(HomeViewModel::class.java) -> {
+                HomeViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
