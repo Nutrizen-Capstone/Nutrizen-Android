@@ -1,5 +1,6 @@
 package com.capstone.nutrizen.activity.scan
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -25,17 +26,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AvTimer
+import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
+import androidx.compose.material.icons.outlined.Dining
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,7 +56,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,8 +68,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.capstone.nutrizen.R
+import com.capstone.nutrizen.activity.add.AddActivity
 import com.capstone.nutrizen.helper.TensorFLowHelper
-import com.capstone.nutrizen.helper.TensorFLowHelper.imageSize
 import com.capstone.nutrizen.helper.createImageFile
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
 import java.util.Objects
@@ -85,6 +99,8 @@ class ScanActivity : ComponentActivity() {
 fun ScanPage(
     modifier: Modifier = Modifier,
 ) {
+    var food: String = ""
+
     //The URI of the photo that the user has picked
     var photoUri: Uri? by remember { mutableStateOf(null) }
     var bitmap: Bitmap? by remember { mutableStateOf(null) }
@@ -127,13 +143,12 @@ fun ScanPage(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp)
-                .verticalScroll(rememberScrollState())
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
+
+            Spacer(modifier = Modifier.height(5.dp))
             photoUri?.let {
                 if (Build.VERSION.SDK_INT < 28)
                     bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
@@ -153,7 +168,6 @@ fun ScanPage(
                             .show()
                     }
                 }
-
                 //Use Coil to display the selected image
                 val painter = rememberAsyncImagePainter(
                     ImageRequest
@@ -161,14 +175,12 @@ fun ScanPage(
                         .data(data = photoUri)
                         .build()
                 )
-
                 Image(
                     painter = painter,
                     contentDescription = null,
                     modifier = Modifier
-                        .padding(5.dp)
-                        .height(400.dp)
-                        .width(400.dp)
+                        .height(300.dp)
+                        .width(300.dp)
                         .border(6.dp, Color.Gray),
                     contentScale = ContentScale.Crop
                 )
@@ -176,49 +188,28 @@ fun ScanPage(
             if (photoUri == null) {
                 Box(
                     modifier = Modifier
-                        .padding(horizontal = 10.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.small
+                            shape = MaterialTheme.shapes.large
                         )
-                        .height(400.dp)
-                        .width(400.dp)
+                        .height(300.dp)
+                        .width(300.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.AddPhotoAlternate,
                         contentDescription = "icon",
                         modifier = modifier
                             .fillMaxSize()
-                            .padding(7.dp),
+                            .padding(20.dp),
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            bitmap?.let {
-                val scaledBitmap = Bitmap.createScaledBitmap(it, imageSize, imageSize, false);
-                TensorFLowHelper.classifyImage(scaledBitmap) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Text(text = "Image is classified as: ${it}.")
-                        Text(text = it, color = Color.White, fontSize = 24.sp)
-                    }
-                }
-            }
-            var food :String =""
-            var calorie : Double =
-                when (food) {
-                    "ayam bakar"-> 250.0
-                    "ayam goreng"->175.8
-                    "bakso"->150.0
-                    else -> 0.0
-                }
-            Row(modifier = Modifier.padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Button(
                     onClick = {
                         //On button press, launch the photo picker
@@ -229,18 +220,240 @@ fun ScanPage(
                                 mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                             )
                         )
-                    }, modifier = Modifier
+                    }, modifier = Modifier.width(120.dp)
                 ) {
-                    Text("Gallery")
+                    Text(stringResource(id = R.string.btn_gallery))
                 }
+                Spacer(modifier = Modifier.width(30.dp))
                 Button(
                     onClick = {
                         //On button press, launch the camera
                         cameraLauncher.launch(uri)
-                    }, modifier = Modifier
+                    }, modifier = Modifier.width(120.dp)
                 ) {
-                    Text("Camera")
+                    Text(stringResource(id = R.string.btn_camera))
                 }
+            }
+
+            bitmap?.let {
+                val scaledBitmap = Bitmap.createScaledBitmap(
+                    it,
+                    TensorFLowHelper.imageSize,
+                    TensorFLowHelper.imageSize, false
+                );
+                TensorFLowHelper.classifyImage(scaledBitmap) {
+                    food = it
+                    Row(
+                        modifier = Modifier
+                            .height(70.dp)
+                            .width(300.dp)
+                            .padding(10.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = MaterialTheme.shapes.medium
+                            ),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Dining,
+                            contentDescription = "icon",
+                            modifier = modifier
+                                .height(50.dp)
+                                .width(50.dp)
+                                .padding(horizontal = 10.dp),
+                        )
+                        Text(
+                            text = it,
+                            modifier = Modifier
+                                .padding(horizontal = 10.dp),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
+            }
+            if (bitmap == null) {
+                Row(
+                    modifier = Modifier
+                        .height(70.dp)
+                        .width(300.dp)
+                        .padding(10.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Info,
+                        contentDescription = "icon",
+                        modifier = modifier
+                            .height(50.dp)
+                            .width(50.dp)
+                            .padding(horizontal = 10.dp),
+                    )
+                    Text(
+                        text = "Pick Image and Add Food",
+                        modifier = Modifier
+                            .padding(horizontal = 10.dp),
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Start
+                    )
+                }
+            }
+
+            // #eat Time dropdown menu
+            val timelist = arrayOf("Select", "Breakfast", "Lunch", "Dinner", "Snack/ other")
+            var expandedTime by remember { mutableStateOf(false) }
+            var selectedTime by remember { mutableStateOf(timelist[0]) }
+
+            Row(
+                modifier = modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier =
+                    Modifier
+                        .padding(horizontal = 10.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .height(55.dp)
+                        .width(55.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AvTimer,
+                        contentDescription = "icon",
+                        modifier = modifier
+                            .fillMaxSize()
+                            .padding(7.dp),
+                    )
+                }
+                ExposedDropdownMenuBox(
+                    expanded = expandedTime,
+                    onExpandedChange = {
+                        expandedTime = !expandedTime
+                    }
+                ) {
+                    OutlinedTextField(
+                        value = selectedTime,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTime) },
+                        modifier = Modifier.menuAnchor(),
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.form_eatTime),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        },
+                        colors = TextFieldDefaults.textFieldColors(),
+                        enabled = photoUri != null
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedTime,
+                        onDismissRequest = { expandedTime = false }
+                    ) {
+                        timelist.forEach { item ->
+                            DropdownMenuItem(
+                                text = { Text(text = item) },
+                                onClick = {
+                                    selectedTime = item
+                                    expandedTime = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
+                // #portion form
+                val portion = remember { mutableStateOf(TextFieldValue()) }
+                Row(
+                    modifier = modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier =
+                        Modifier
+                            .padding(horizontal = 10.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .height(55.dp)
+                            .width(55.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Height,
+                            contentDescription = "icon",
+                            modifier = modifier
+                                .fillMaxSize()
+                                .padding(7.dp),
+                        )
+                    }
+                    OutlinedTextField(
+                        modifier = Modifier.width(150.dp),
+                        label = {
+                            Text(
+                                text = stringResource(id = R.string.form_potion),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        },
+                        colors = TextFieldDefaults.textFieldColors(),
+                        value = portion.value,
+                        onValueChange = { portion.value = it },
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ), enabled = photoUri != null
+                    )
+                    Box(
+                        modifier =
+                        Modifier
+                            .padding(horizontal = 10.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .height(55.dp)
+                            .width(55.dp),
+
+                        ) {
+                        Text(
+                            text = "Portion",
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+
+            Button(
+                onClick = {
+                    context.startActivity(
+                        Intent(context, AddActivity::class.java).putExtra(
+                            AddActivity.Food,
+                            food
+                        )
+                    )
+                }, modifier = Modifier.width(200.dp), enabled = photoUri != null
+            ) {
+                Text(stringResource(id = R.string.btn_toAdd))
             }
         }
     }

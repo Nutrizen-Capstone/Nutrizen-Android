@@ -46,6 +46,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -132,19 +133,20 @@ fun FormPage(
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(id = R.string.app_name),
+                    text = stringResource(id = R.string.form_title),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 20.sp,
-                    textAlign = TextAlign.Center
+                        .padding(horizontal = 20.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start
                 )
-            }
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
         )
         Column(
             modifier = Modifier
-                .padding(20.dp)
+                .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
@@ -152,13 +154,12 @@ fun FormPage(
             val keyboardController = LocalSoftwareKeyboardController.current
 
             Text(
-                text = stringResource(id = R.string.form_title),
+                text = stringResource(id = R.string.form_description),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
+                    .padding(12.dp),
                 fontWeight = FontWeight.Light,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center
+                fontSize = 17.sp,
             )
 
             // coba password
@@ -646,11 +647,11 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
-           /* var coffee : Int? = 0
-            dropdown(id = {
-                value: Int ->  coffee=value
-            })
-            */
+            /* var coffee : Int? = 0
+             dropdown(id = {
+                 value: Int ->  coffee=value
+             })
+             */
 
             Spacer(modifier = Modifier.height(20.dp))
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
@@ -668,8 +669,8 @@ fun FormPage(
                                 activityId,
                                 goalId
                             )
-                        }catch (e:Exception){
-                            Toast.makeText(context,e.message.toString(),Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
                         }
                     },
                     shape = RoundedCornerShape(55.dp),

@@ -88,7 +88,7 @@ fun ProfileScreen(
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.menu_profile),
+                    text = stringResource(R.string.title_profile),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp),
