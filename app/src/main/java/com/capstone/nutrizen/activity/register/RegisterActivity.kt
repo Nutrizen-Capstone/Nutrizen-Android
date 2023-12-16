@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +15,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,22 +42,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -105,34 +109,44 @@ fun RegisterPage(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center
-                )
-            }
-        )
         Column(
-            modifier = Modifier.padding(20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             val username = remember { mutableStateOf(TextFieldValue()) }
+            val name = remember { mutableStateOf(TextFieldValue()) }
             val password = remember { mutableStateOf(TextFieldValue()) }
             val password2 = remember { mutableStateOf(TextFieldValue()) }
             var errorpassword by remember { mutableStateOf(false) }
             var errorpassword2 by remember { mutableStateOf(false) }
             var errorusername by remember { mutableStateOf(false) }
+            var errorname by remember { mutableStateOf(false) }
             var isPasswordVisible by remember { mutableStateOf(false) }
             val keyboardController = LocalSoftwareKeyboardController.current
 
+            Row(
+                modifier = Modifier.padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_nutrizen),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(100.dp)
+                        .width(100.dp)
+                        .clip(CircleShape),
+                    contentDescription = "logo"
+                )
+                Text(
+                    text = stringResource(id = R.string.app_name),
+                    style = TextStyle(fontSize = 50.sp, fontFamily = FontFamily.Serif)
+                )
+            }
             Text(
                 text = "Register",
                 style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
@@ -155,17 +169,41 @@ fun RegisterPage(
                     if (errorusername) {
                         Text(text = "Please enter your username")
                     }
+                },
+                trailingIcon = {
+                    Icon(imageVector = Icons.Default.Email, contentDescription = null)
                 }
             )
+            Spacer(modifier = Modifier.height(5.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+            OutlinedTextField(
+                modifier = modifier,
+                label = { Text(text = "Name") },
+                value = name.value,
+                onValueChange = { name.value = it },
+                maxLines = 1,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                isError = errorname,
+                supportingText = {
+                    if (errorname) {
+                        Text(text = "Please enter your name")
+                    }
+                },
+                trailingIcon = {
+                    Icon(imageVector = Icons.Default.Person, contentDescription = null)
+                }
+            )
+            Spacer(modifier = Modifier.height(5.dp))
 
             OutlinedTextField(
                 modifier = modifier,
                 value = password.value,
                 onValueChange = { password.value = it },
                 label = {
-                    Text(text = "password")
+                    Text(text = "Password")
                 },
                 trailingIcon = {
                     IconButton(onClick = {
@@ -208,14 +246,14 @@ fun RegisterPage(
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             OutlinedTextField(
                 modifier = modifier,
                 value = password2.value,
                 onValueChange = { password2.value = it },
                 label = {
-                    Text(text = "confirm password")
+                    Text(text = "Confirm Password")
                 },
                 trailingIcon = {
                     IconButton(onClick = {
@@ -258,7 +296,7 @@ fun RegisterPage(
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
@@ -288,27 +326,20 @@ fun RegisterPage(
                     Text(text = "Register")
                 }
             }
-
             Spacer(modifier = Modifier.height(30.dp))
 
-            Row(modifier = Modifier) {
+            Row(modifier = Modifier, horizontalArrangement = Arrangement.Center) {
                 Text(text = "Already have an account? ")
-                Box(modifier = Modifier.fillMaxWidth()) {
-
-                    ClickableText(
-                        text = AnnotatedString("Login"),
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(20.dp),
-                        onClick = { activity.finish() },
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily.Default,
-                            textDecoration = TextDecoration.Underline,
-                            color = colorResource(id = R.color.purple_700)
-                        )
+                ClickableText(
+                    text = AnnotatedString("Login"),
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    onClick = { activity.finish() },
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.Default,
+                        color = colorResource(id = R.color.purple_700)
                     )
-                }
+                )
             }
 
         }

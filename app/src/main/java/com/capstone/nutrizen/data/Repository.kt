@@ -1,5 +1,6 @@
 package com.capstone.nutrizen.data
 
+import com.capstone.nutrizen.data.retrofit.ApiConfig
 import com.capstone.nutrizen.data.retrofit.ApiService
 import com.capstone.nutrizen.data.session.SessionModel
 import com.capstone.nutrizen.data.session.SessionPreference
@@ -16,7 +17,9 @@ class Repository private constructor(
     suspend fun login(email: String, password: String) =
         api.login(email, password)
 
-   
+    suspend fun getHistory(token:String) =
+        ApiConfig.getApiToken(token).getStories()
+
 
     //repository for preference of session
     suspend fun saveSession(user: SessionModel) {

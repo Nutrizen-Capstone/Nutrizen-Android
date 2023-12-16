@@ -28,6 +28,7 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                 //get success message
                 val response = repository.login(email, password)
                 _loginResponse.postValue(response)
+
                 saveSession(
                     // semuanya berdasarkan respose.data kecuali islogin =true
                     SessionModel(

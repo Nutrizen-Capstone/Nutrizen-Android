@@ -69,5 +69,5 @@
     <string name="title_scan">Food Scanner</string>
     <string name="title_profile">My Profile</string>
     <string name="form_eatTime">Eating Time</string>
-    <string name="form_potion">Portion</string>
+    <string name="form_potion">Serving</string>
 </resources>

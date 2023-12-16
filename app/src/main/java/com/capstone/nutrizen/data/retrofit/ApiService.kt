@@ -1,9 +1,11 @@
 package com.capstone.nutrizen.data.retrofit
 
+import com.capstone.nutrizen.data.retrofit.response.GetStoryResponse
 import com.capstone.nutrizen.data.retrofit.response.LoginResponse
 import com.capstone.nutrizen.data.retrofit.response.SignupResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 
@@ -22,4 +24,8 @@ interface ApiService {
         @Field("email") email: String,
         @Field("password") password: String
     ): LoginResponse
+
+    @GET("stories")
+    suspend fun getStories(
+    ): GetStoryResponse
 }

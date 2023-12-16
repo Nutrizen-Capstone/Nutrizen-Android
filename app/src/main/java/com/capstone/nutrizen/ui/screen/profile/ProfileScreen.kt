@@ -101,18 +101,17 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp)
                 .verticalScroll(rememberScrollState())
-                .weight(1f),
+                .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             Icon(
                 imageVector = Icons.Outlined.AccountCircle,
                 contentDescription = "icon",
                 modifier = modifier
                     .height(150.dp)
-                    .width(150.dp)
-                    .padding(7.dp),
+                    .width(150.dp),
             )
             Text(
                 text = name,
@@ -122,7 +121,7 @@ fun ProfileScreen(
                 ),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = modifier
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 5.dp)
             )
             Row(
                 modifier = Modifier,
@@ -139,14 +138,14 @@ fun ProfileScreen(
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
                     modifier = modifier,
-
                     )
             }
+            Spacer(modifier = Modifier.height(20.dp))
+
             Row(
                 modifier = Modifier
-                    .height(100.dp)
+                    .height(50.dp)
                     .width(350.dp)
-                    .padding(20.dp)
                     .clickable(onClick = {
                         context.startActivity(Intent(context, FormActivity::class.java))
                     })
@@ -171,11 +170,12 @@ fun ProfileScreen(
                     color = Color.White
                 )
             }
+            Spacer(modifier = Modifier.height(10.dp))
+
             Row(
                 modifier = Modifier
-                    .height(100.dp)
+                    .height(50.dp)
                     .width(350.dp)
-                    .padding(20.dp)
                     .clickable(onClick = {
                         viewModel.logout()
                         context.startActivity(Intent(context, LoginActivity::class.java))
@@ -202,15 +202,13 @@ fun ProfileScreen(
                     color = Color.White
                 )
             }
-
+            Spacer(modifier = Modifier.height(20.dp))
 
             // coba generate data
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp)
-                    .verticalScroll(rememberScrollState())
-                    .weight(1f),
+                    .height(400.dp).width(400.dp).padding(20.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(text = birth)

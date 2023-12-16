@@ -20,6 +20,9 @@ class FormViewModel(private val repository: Repository) : ViewModel() {
         private const val TAG = "DataViewModel"
     }
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     // sementara sebelum dapat endpoint numpang endoint dicoding
     private val _formResponse = MutableLiveData<LoginResponse>()
     val FormResponse: LiveData<LoginResponse> = _formResponse
@@ -35,11 +38,14 @@ class FormViewModel(private val repository: Repository) : ViewModel() {
         activity: Int,
         goal: Int
     ) {
+        _isLoading.value=true
         viewModelScope.launch {
             try {
                 //get success message
                 val response = repository.login(email, password)
                 _formResponse.postValue(response)
+                _isLoading.value = false
+
                 saveSession(
                     SessionModel(
                         response.loginResult.userId,
@@ -64,6 +70,7 @@ class FormViewModel(private val repository: Repository) : ViewModel() {
                 val errorBody = Gson().fromJson(jsonInString, LoginResponse::class.java)
                 val errorMessage = errorBody.message
                 _formResponse.postValue(errorBody)
+                _isLoading.value= false
                 Log.d(TAG, "onError: $errorMessage")
             }
         }

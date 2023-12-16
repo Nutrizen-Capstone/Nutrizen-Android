@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.SportsMartialArts
 import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -56,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -96,6 +98,7 @@ class FormActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     FormPage()
+
                     viewModel.FormResponse.observe(this) {
                         if (it.error) {
                             Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
@@ -105,6 +108,7 @@ class FormActivity : ComponentActivity() {
                             finish()
                         }
                     }
+
                 }
             }
         }
@@ -122,9 +126,15 @@ fun FormPage(
 ) {
     val context = LocalContext.current
     val activity = (LocalLifecycleOwner.current as ComponentActivity)
+
     var email: String?
     viewModel.getSession().observeAsState().value.let {
         email = it?.email
+    }
+
+    var loading by remember { mutableStateOf(false) }
+    viewModel.isLoading.observeAsState().value?.let {
+        loading = it
     }
 
     Column(
@@ -144,6 +154,21 @@ fun FormPage(
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
         )
+
+        if (loading == true) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize().background(color = Color.Transparent),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.width(64.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                )
+            }
+        }
+
         Column(
             modifier = Modifier
                 .padding(horizontal = 20.dp)
@@ -645,7 +670,7 @@ fun FormPage(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(15.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             /* var coffee : Int? = 0
              dropdown(id = {
@@ -653,7 +678,6 @@ fun FormPage(
              })
              */
 
-            Spacer(modifier = Modifier.height(20.dp))
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {
@@ -681,6 +705,7 @@ fun FormPage(
                     Text(text = "Save")
                 }
             }
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

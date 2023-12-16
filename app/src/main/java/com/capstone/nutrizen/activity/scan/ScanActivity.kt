@@ -28,10 +28,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AvTimer
-import androidx.compose.material.icons.filled.Height
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.KebabDining
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
-import androidx.compose.material.icons.outlined.Dining
+import androidx.compose.material.icons.outlined.Fastfood
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -57,10 +57,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -246,7 +246,7 @@ fun ScanPage(
                     Row(
                         modifier = Modifier
                             .height(70.dp)
-                            .width(300.dp)
+                            .width(350.dp)
                             .padding(10.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.primaryContainer,
@@ -256,7 +256,7 @@ fun ScanPage(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.Dining,
+                            imageVector = Icons.Outlined.Fastfood,
                             contentDescription = "icon",
                             modifier = modifier
                                 .height(50.dp)
@@ -278,7 +278,7 @@ fun ScanPage(
                 Row(
                     modifier = Modifier
                         .height(70.dp)
-                        .width(300.dp)
+                        .width(350.dp)
                         .padding(10.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer,
@@ -299,88 +299,24 @@ fun ScanPage(
                         text = "Pick Image and Add Food",
                         modifier = Modifier
                             .padding(horizontal = 10.dp),
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Light,
+                        fontStyle = FontStyle.Italic,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Start
                     )
                 }
             }
 
-            // #eat Time dropdown menu
-            val timelist = arrayOf("Select", "Breakfast", "Lunch", "Dinner", "Snack/ other")
-            var expandedTime by remember { mutableStateOf(false) }
-            var selectedTime by remember { mutableStateOf(timelist[0]) }
-
-            Row(
-                modifier = modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier =
-                    Modifier
-                        .padding(horizontal = 10.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .height(55.dp)
-                        .width(55.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AvTimer,
-                        contentDescription = "icon",
-                        modifier = modifier
-                            .fillMaxSize()
-                            .padding(7.dp),
-                    )
-                }
-                ExposedDropdownMenuBox(
-                    expanded = expandedTime,
-                    onExpandedChange = {
-                        expandedTime = !expandedTime
-                    }
-                ) {
-                    OutlinedTextField(
-                        value = selectedTime,
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTime) },
-                        modifier = Modifier.menuAnchor(),
-                        label = {
-                            Text(
-                                text = stringResource(id = R.string.form_eatTime),
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-                        },
-                        colors = TextFieldDefaults.textFieldColors(),
-                        enabled = photoUri != null
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expandedTime,
-                        onDismissRequest = { expandedTime = false }
-                    ) {
-                        timelist.forEach { item ->
-                            DropdownMenuItem(
-                                text = { Text(text = item) },
-                                onClick = {
-                                    selectedTime = item
-                                    expandedTime = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-
-
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
+
                 // #portion form
-                val portion = remember { mutableStateOf(TextFieldValue()) }
+                val portion = remember { mutableStateOf("1") } // must convert to int
                 Row(
                     modifier = modifier,
                     verticalAlignment = Alignment.CenterVertically
@@ -397,7 +333,7 @@ fun ScanPage(
                             .width(55.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Height,
+                            imageVector = Icons.Default.KebabDining,
                             contentDescription = "icon",
                             modifier = modifier
                                 .fillMaxSize()
@@ -430,7 +366,7 @@ fun ScanPage(
                                 shape = MaterialTheme.shapes.small
                             )
                             .height(55.dp)
-                            .width(55.dp),
+                            .width(70.dp),
 
                         ) {
                         Text(
@@ -438,6 +374,75 @@ fun ScanPage(
                             modifier = Modifier.align(Alignment.Center),
                             style = MaterialTheme.typography.bodyLarge,
                         )
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // #eat Time dropdown menu
+                val timelist = arrayOf("Select", "Breakfast", "Lunch", "Dinner", "Snack/ other")
+                var expandedTime by remember { mutableStateOf(false) }
+                var selectedTime by remember { mutableStateOf(timelist[0]) }
+
+                Row(
+                    modifier = modifier,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier =
+                        Modifier
+                            .padding(horizontal = 10.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .height(55.dp)
+                            .width(55.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccessTime,
+                            contentDescription = "icon",
+                            modifier = modifier
+                                .fillMaxSize()
+                                .padding(7.dp),
+                        )
+                    }
+                    ExposedDropdownMenuBox(
+                        expanded = expandedTime,
+                        onExpandedChange = {
+                            expandedTime = !expandedTime
+                        }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedTime,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTime) },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .width(230.dp),
+                            label = {
+                                Text(
+                                    text = stringResource(id = R.string.form_eatTime),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+                            },
+                            colors = TextFieldDefaults.textFieldColors(),
+                            enabled = photoUri != null
+                        )
+                        ExposedDropdownMenu(
+                            expanded = expandedTime,
+                            onDismissRequest = { expandedTime = false }
+                        ) {
+                            timelist.forEach { item ->
+                                DropdownMenuItem(
+                                    text = { Text(text = item) },
+                                    onClick = {
+                                        selectedTime = item
+                                        expandedTime = false
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -451,7 +456,7 @@ fun ScanPage(
                             food
                         )
                     )
-                }, modifier = Modifier.width(200.dp), enabled = photoUri != null
+                }, modifier = Modifier.width(300.dp), enabled = photoUri != null
             ) {
                 Text(stringResource(id = R.string.btn_toAdd))
             }
