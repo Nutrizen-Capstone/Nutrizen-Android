@@ -67,7 +67,9 @@ fun NutrizenApp(
                     context = mContext)
             }
             composable(Screen.History.route) {
-                HistoryScreen()
+                HistoryScreen(
+                    activity= activity,
+                    context = mContext)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(

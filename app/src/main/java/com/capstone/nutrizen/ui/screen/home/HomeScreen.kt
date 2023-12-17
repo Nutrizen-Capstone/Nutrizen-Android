@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
+import com.capstone.nutrizen.helper.calculateBMI
 import com.capstone.nutrizen.helper.calculateBMR
 import kotlin.math.round
 
@@ -38,27 +39,24 @@ fun HomeScreen(
         factory = ViewModelFactory(Injection.provideRepository(context = LocalContext.current))
     ),
 ) {
-    var name :String=""
-    var birth :String= ""
-    var age :Int= 0
-    var token: String = ""
-    var genderId: Int=0
-    var height: Double=0.0
-    var weight: Double=0.0
-    var activityId: Int=0
-    var goal: Int=0
+    var name =""
+    var age = 0
+    var genderId=0
+    var height=0.0
+    var weight=0.0
+    var activityId=0
+    var goal=0
+    var bmi = 0.0
     var bmr = 0.0
     var calorieNeeds = 0.0
     viewModel.getSession().observeAsState().value?.let { its ->
         name = its.name
-        birth = its.birthDate
         age = its.age
         genderId = its.gender
         height = its.height
         weight = its.weight
         activityId = its.activity
         goal = its.goal
-        token = its.token
     }
     var activity: Double =
         when (activityId) {
@@ -75,7 +73,8 @@ fun HomeScreen(
             2 -> -161
             else -> 0
         }
-
+    bmi = calculateBMI(height,weight)
+    var bmiDesc: String =""
     bmr = calculateBMR(weight,height,age,gender,activity)
     calorieNeeds=
         when(goal) {

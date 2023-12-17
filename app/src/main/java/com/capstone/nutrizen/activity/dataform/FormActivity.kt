@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.SportsMartialArts
 import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -57,7 +56,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -78,6 +76,7 @@ import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.helper.getAge
 import com.capstone.nutrizen.helper.toFormattedString
 import com.capstone.nutrizen.helper.toMonthName
+import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
 import java.util.Calendar
 import java.util.Date
@@ -127,9 +126,15 @@ fun FormPage(
     val context = LocalContext.current
     val activity = (LocalLifecycleOwner.current as ComponentActivity)
 
-    var email: String?
-    viewModel.getSession().observeAsState().value.let {
-        email = it?.email
+    var token = ""
+    var id = ""
+    var email = ""
+    var name = ""
+    viewModel.getSession().observeAsState().value?.let {
+        token = it.token
+        id = it.id
+        email = it.email
+        name = it.name
     }
 
     var loading by remember { mutableStateOf(false) }
@@ -156,17 +161,7 @@ fun FormPage(
         )
 
         if (loading == true) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize().background(color = Color.Transparent),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.width(64.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                )
-            }
+            Loading(modifier = Modifier)
         }
 
         Column(
@@ -186,21 +181,6 @@ fun FormPage(
                 fontWeight = FontWeight.Light,
                 fontSize = 17.sp,
             )
-
-            // coba password
-            val username = remember { mutableStateOf(TextFieldValue()) }
-            OutlinedTextField(
-                modifier = modifier,
-                label = { Text(text = "password") },
-                value = username.value,
-                onValueChange = { username.value = it },
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                ),
-            )
-            Spacer(modifier = Modifier.height(10.dp))
 
             //var date by remember { mutableStateOf(Date().time) }
             //DatePicker{date = it}
@@ -672,26 +652,23 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(20.dp))
 
-            /* var coffee : Int? = 0
-             dropdown(id = {
-                 value: Int ->  coffee=value
-             })
-             */
-
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {
                         try {
                             viewModel.save(
-                                email.toString(),
-                                username.value.text, //password
+                                token,
+                                id,
+                                "",
                                 selectedDate.value,
                                 age.value,
                                 genderId,
                                 height.value.text.toDouble(),
                                 weight.value.text.toDouble(),
                                 activityId,
-                                goalId
+                                goalId,
+                                email,
+                                name
                             )
                         } catch (e: Exception) {
                             Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()

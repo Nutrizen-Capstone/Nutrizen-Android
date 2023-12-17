@@ -42,7 +42,6 @@
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.Nutrizen" />
-
         <activity
             android:name=".activity.login.LoginActivity"
             android:exported="true"

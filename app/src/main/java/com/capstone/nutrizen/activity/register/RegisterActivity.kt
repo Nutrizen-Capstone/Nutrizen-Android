@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,6 +65,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.R
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
+import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
 
 class RegisterActivity : ComponentActivity() {
@@ -106,9 +108,19 @@ fun RegisterPage(
     val mContext = LocalContext.current
     val activity = (LocalLifecycleOwner.current as ComponentActivity)
 
+    var loading by remember { mutableStateOf(false) }
+    viewModel.isLoading.observeAsState().value?.let {
+        loading = it
+    }
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+
+        if (loading == true) {
+            Loading(modifier = Modifier)
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -306,9 +318,10 @@ fun RegisterPage(
                         errorpassword2 = password2.value.text.isEmpty()
                         if (errorpassword == false && errorpassword2 == false && errorusername == false) {
                             viewModel.register(
-                                password2.value.text,
+                                name.value.text,
                                 username.value.text,
-                                password.value.text
+                                password.value.text,
+                                password2.value.text
                             )
                         } else
                             Toast.makeText(

@@ -27,6 +27,11 @@ fun calculateBMR(w: Double, h: Double, age: Int, g: Int, a: Double):Double {
     return   ((10 * w) + (6.25 * h) - (5 * age) + g )*a
 }
 
+fun calculateBMI(h:Double,w:Double):Double{
+    return w/(h/100*h/100)
+}
+
+
 fun Context.createImageFile(): File {
     // Create an image file name
     val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())

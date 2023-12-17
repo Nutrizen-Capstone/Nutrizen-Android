@@ -15,17 +15,47 @@ data class LoginResponse(
 
 	@field:SerializedName("message")
 	val message: String
-):Parcelable
+) : Parcelable
 
 @Parcelize
 data class LoginResult(
 
-	@field:SerializedName("name")
-	val name: String ,
+	@field:SerializedName("goal")
+	val goal: Int,
+
+	@field:SerializedName("gender")
+	val gender: Int,
+
+	@field:SerializedName("activity")
+	val activity: Int,
+
+	@field:SerializedName("weight")
+	val weight: Double,
 
 	@field:SerializedName("userId")
 	val userId: String,
 
+	@field:SerializedName("birthDate")
+	val birthDate: String,
+
 	@field:SerializedName("token")
-	val token: String
-):Parcelable
+	val token: String,
+
+	@field:SerializedName("photoUrl")
+	val photoUrl: String,
+
+	@field:SerializedName("isDataCompleted")
+	val isDataCompleted: Boolean,
+
+	@field:SerializedName("name")
+	val name: String,
+
+	@field:SerializedName("email")
+	val email: String,
+
+	@field:SerializedName("age")
+	val age: Int,
+
+	@field:SerializedName("height")
+	val height: Double
+) : Parcelable

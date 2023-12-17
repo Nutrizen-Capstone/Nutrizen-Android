@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -66,6 +67,7 @@ import com.capstone.nutrizen.activity.main.MainActivity
 import com.capstone.nutrizen.activity.register.RegisterActivity
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
+import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
 
 class LoginActivity : ComponentActivity() {
@@ -118,10 +120,19 @@ fun LoginPage(
 ) {
     val mContext = LocalContext.current
 
+    var loading by remember { mutableStateOf(false) }
+    viewModel.isLoading.observeAsState().value?.let {
+        loading = it
+    }
 
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+
+        if (loading == true) {
+            Loading(modifier = Modifier)
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()

@@ -19,15 +19,21 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
         private const val TAG = "LoginViewModel"
     }
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     private val _loginResponse = MutableLiveData<LoginResponse>()
     val loginResponse: LiveData<LoginResponse> = _loginResponse
 
     fun login(email: String, password: String) {
+        _isLoading.value=true
+
         viewModelScope.launch {
             try {
                 //get success message
                 val response = repository.login(email, password)
                 _loginResponse.postValue(response)
+                _isLoading.value= false
 
                 saveSession(
                     // semuanya berdasarkan respose.data kecuali islogin =true
@@ -35,17 +41,18 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                         response.loginResult.userId,
                         response.loginResult.name,
                         response.loginResult.token,
-                        email,
+                        response.loginResult.email,
                         true,
-                        false,
-                        "example",
-                        0,
-                        0,
-                        0.0,
-                        0.0,
-                        0,
-                        0
-                    )
+                        response.loginResult.isDataCompleted,
+                        response.loginResult.birthDate,
+                        response.loginResult.age,
+                        response.loginResult.gender,
+                        response.loginResult.height,
+                        response.loginResult.weight,
+                        response.loginResult.activity,
+                        response.loginResult.goal,
+
+                        )
                 )
                 Log.d(TAG, "onSuccess: ${response.message}")
             } catch (e: HttpException) {
@@ -54,6 +61,7 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
                 val errorBody = Gson().fromJson(jsonInString, LoginResponse::class.java)
                 val errorMessage = errorBody.message
                 _loginResponse.postValue(errorBody)
+                _isLoading.value= false
                 Log.d(TAG, "onError: $errorMessage")
             }
         }

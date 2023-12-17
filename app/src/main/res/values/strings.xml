@@ -70,4 +70,6 @@
     <string name="title_profile">My Profile</string>
     <string name="form_eatTime">Eating Time</string>
     <string name="form_potion">Serving</string>
+    <string name="loading">Loading...</string>
+    <string name="search">Search</string>
 </resources>
