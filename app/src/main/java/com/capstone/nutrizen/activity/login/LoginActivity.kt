@@ -102,7 +102,7 @@ class LoginActivity : ComponentActivity() {
 
         viewModel.loginResponse.observe(this) {
             if (it.error) {
-                Toast.makeText(this, "failed, " + it.loginResult, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
             }

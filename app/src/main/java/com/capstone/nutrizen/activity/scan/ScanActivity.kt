@@ -1,6 +1,5 @@
 package com.capstone.nutrizen.activity.scan
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -13,6 +12,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,6 +48,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -66,17 +67,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.capstone.nutrizen.R
-import com.capstone.nutrizen.activity.add.AddActivity
+import com.capstone.nutrizen.data.Injection
+import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.helper.TensorFLowHelper
 import com.capstone.nutrizen.helper.createImageFile
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
 import java.util.Objects
+import kotlin.math.round
 
 
 class ScanActivity : ComponentActivity() {
+    private val viewModel by viewModels<ScanViewModel> {
+        ViewModelFactory.getInstance(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -87,6 +95,15 @@ class ScanActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     ScanPage()
+
+                    viewModel.addResponse.observe(this) {
+                        if (it.error) {
+                            Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
                 }
             }
         }
@@ -98,8 +115,20 @@ class ScanActivity : ComponentActivity() {
 @Composable
 fun ScanPage(
     modifier: Modifier = Modifier,
+    viewModel: ScanViewModel = viewModel(
+        factory = ViewModelFactory(Injection.provideRepository(context = LocalContext.current))
+    )
 ) {
-    var food: String = ""
+    var token = ""
+    var id = ""
+    viewModel.getSession().observeAsState().value?.let { its ->
+        token = its.token
+        id = its.id
+    }
+    var food = ""
+    var eatTime = ""
+    var portionId = ""
+    var calorie = 0
 
     //The URI of the photo that the user has picked
     var photoUri: Uri? by remember { mutableStateOf(null) }
@@ -129,7 +158,7 @@ fun ScanPage(
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = "Scan Food Image",
+                    text = stringResource(id = R.string.title_scan),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
@@ -243,6 +272,42 @@ fun ScanPage(
                 );
                 TensorFLowHelper.classifyImage(scaledBitmap) {
                     food = it
+                    calorie =
+                        when (food) {
+                            "ayam bakar" -> 242
+                            "ayam goreng" -> 260
+                            "bakso" -> 200
+                            "bakwan" -> 280
+                            "batagor" -> 290
+                            "bihun" -> 100
+                            "bika_ambon" -> 164
+                            "capcay" -> 83
+                            "dadar_gulung" -> 131
+                            "gado-gado" -> 137
+                            "ikan goreng" -> 416
+                            "kerupuk" -> 201
+                            "martabak telur" -> 186
+                            "mie" -> 113
+                            "nasi goreng" -> 168
+                            "nasi putih" -> 180
+                            "nugget" -> 297
+                            "opor ayam" -> 163
+                            "pempek" -> 195
+                            "rendang" -> 58
+                            "roti" -> 248
+                            "sate" -> 200
+                            "sosis" -> 38
+                            "soto" -> 150
+                            "steak" -> 252
+                            "tahu" -> 115
+                            "telur" -> 62
+                            "tempe" -> 336
+                            "terong balado" -> 97
+                            "tumis kangkung" -> 98
+                            "udang" -> 144
+                            else -> 0
+                        }
+
                     Row(
                         modifier = Modifier
                             .height(70.dp)
@@ -317,6 +382,7 @@ fun ScanPage(
 
                 // #portion form
                 val portion = remember { mutableStateOf("1") } // must convert to int
+                portionId = portion.value
                 Row(
                     modifier = modifier,
                     verticalAlignment = Alignment.CenterVertically
@@ -382,6 +448,7 @@ fun ScanPage(
                 val timelist = arrayOf("Select", "Breakfast", "Lunch", "Dinner", "Snack/ other")
                 var expandedTime by remember { mutableStateOf(false) }
                 var selectedTime by remember { mutableStateOf(timelist[0]) }
+                eatTime = selectedTime
 
                 Row(
                     modifier = modifier,
@@ -450,12 +517,19 @@ fun ScanPage(
 
             Button(
                 onClick = {
-                    context.startActivity(
-                        Intent(context, AddActivity::class.java).putExtra(
-                            AddActivity.Food,
-                            food
-                        )
-                    )
+                    if (eatTime == "Select") {
+                        Toast.makeText(context, "select eating time first!", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        try {
+                            var total = round(portionId.toDouble() * calorie).toInt()
+                            viewModel.addHistory(
+                                token, id, food, eatTime, calorie, portionId.toDouble(), total
+                            )
+                        } catch (e: Exception) {
+                            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }, modifier = Modifier.width(300.dp), enabled = photoUri != null
             ) {
                 Text(stringResource(id = R.string.btn_toAdd))

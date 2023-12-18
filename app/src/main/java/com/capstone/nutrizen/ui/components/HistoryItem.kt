@@ -32,7 +32,7 @@ fun HistoryItem(
     date: String,
     cals: Int,
     portion: Double,
-    total: Double,
+    total: Int,
     modifier: Modifier = Modifier,
 ) {
 
@@ -52,22 +52,22 @@ fun HistoryItem(
             Row(modifier = Modifier) {
                 Icon(
                     modifier = Modifier
-                        .height(30.dp)
-                        .width(30.dp),
+                        .height(20.dp)
+                        .width(20.dp),
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = null
                 )
-                Text(text = food, fontSize = 20.sp)
+                Text(text = time, fontSize = 15.sp)
             }
             Row(modifier = Modifier) {
                 Icon(
                     modifier = Modifier
-                        .height(30.dp)
-                        .width(30.dp),
+                        .height(20.dp)
+                        .width(20.dp),
                     imageVector = Icons.Default.CalendarToday,
                     contentDescription = null
                 )
-                Text(text = food, fontSize = 20.sp)
+                Text(text = date, fontSize = 15.sp)
             }
         }
         Divider(
@@ -96,12 +96,12 @@ fun HistoryItem(
         )
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
-            Text(text = "Calories/100g",)
-            Text(text = food, fontStyle= FontStyle.Italic)
+            Text(text = "Calories/100g", fontStyle= FontStyle.Italic)
+            Text(text = cals.toString())
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
-            Text(text = "Serving", )
-            Text(text = food, fontStyle= FontStyle.Italic,)
+            Text(text = "Serving", fontStyle= FontStyle.Italic, )
+            Text(text = "$portion x")
         }
         Divider(
             modifier = Modifier
@@ -110,10 +110,11 @@ fun HistoryItem(
             color = Color.Gray,
             thickness = 3.dp
         )
+
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween){
-            Text(text = "Total Calories", )
-            Text(text = food, fontStyle= FontStyle.Italic,)
+            Text(text = "Total Calories", fontStyle= FontStyle.Italic, )
+            Text(text = total.toString())
         }
-        Text(text = food)
+
     }
 }

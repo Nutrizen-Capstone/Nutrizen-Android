@@ -1,25 +1,30 @@
 package com.capstone.nutrizen.ui.screen.home
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,6 +34,10 @@ import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.helper.calculateBMI
 import com.capstone.nutrizen.helper.calculateBMR
+import com.capstone.nutrizen.helper.toSimpleString
+import com.capstone.nutrizen.ui.common.UiState
+import com.capstone.nutrizen.ui.components.Summary
+import java.util.Date
 import kotlin.math.round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,24 +48,30 @@ fun HomeScreen(
         factory = ViewModelFactory(Injection.provideRepository(context = LocalContext.current))
     ),
 ) {
-    var name =""
+    var token=""
+    var id=""
+    val currentDate = Date().toSimpleString()
+    var name = ""
     var age = 0
-    var genderId=0
-    var height=0.0
-    var weight=0.0
-    var activityId=0
-    var goal=0
+    var genderId = 0
+    var height = 0.0
+    var weight = 0.0
+    var activityId = 0
+    var goalId = 0
     var bmi = 0.0
     var bmr = 0.0
     var calorieNeeds = 0.0
+    var calsConsumed = 0
     viewModel.getSession().observeAsState().value?.let { its ->
+        token=its.token
+        id=its.id
         name = its.name
         age = its.age
         genderId = its.gender
         height = its.height
         weight = its.weight
         activityId = its.activity
-        goal = its.goal
+        goalId = its.goal
     }
     var activity: Double =
         when (activityId) {
@@ -73,18 +88,49 @@ fun HomeScreen(
             2 -> -161
             else -> 0
         }
-    bmi = calculateBMI(height,weight)
-    var bmiDesc: String =""
-    bmr = calculateBMR(weight,height,age,gender,activity)
-    calorieNeeds=
-        when(goal) {
-            1 -> bmr *4/5
-            3-> bmr +500
-            else-> bmr
+    var goal :String =
+        when(goalId){
+            1->"Lose Weight"
+            2->"Maintain Weight"
+            3->"Gain Weight"
+            else->"empty"
+        }
+    bmi = calculateBMI(height, weight)
+    var bmiDesc = if (bmi < 18.5) {
+        "Underweight"
+    } else if (bmi > 25 && bmi <= 30) {
+        "Overweight"
+    } else if (bmi > 30) {
+        "Obese"
+    } else {
+        "Normal"
+    }
+
+    bmr = calculateBMR(weight, height, age, gender, activity)
+    calorieNeeds =
+        when (goalId) {
+            1 -> bmr * 4 / 5
+            3 -> bmr + 500
+            else -> bmr
         }
 
+    viewModel.uiStates.collectAsState().value.let { uiState ->
+        when (uiState) {
+            is UiState.Loading -> {
+                viewModel.getHistory(token,id,currentDate)
+            }
+            is UiState.Success -> {
+                uiState.data.forEach{calsConsumed+=it.total}
+            }
+            is UiState.Error -> {
+                val TAG = "errors"
+                Log.d(TAG, "onFAILED: ${uiState.copy()}")
+            }
+        }
+    }
+
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxWidth()
     ) {
         CenterAlignedTopAppBar(
             title = {
@@ -97,56 +143,89 @@ fun HomeScreen(
                     fontSize = 18.sp,
                     textAlign = TextAlign.Start
                 )
-            }
-            ,colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
+            },
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
         )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp)
+                .padding(vertical = 12.dp, horizontal = 10.dp)
                 .verticalScroll(rememberScrollState())
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
             Spacer(modifier = Modifier.height(20.dp))
-            Box(
+            Column(
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = MaterialTheme.shapes.medium
                     )
-                    .padding(20.dp)
-                    .height(100.dp),
+                    .padding(10.dp)
             ) {
                 Text(
-                    text = "Your daily Calories goal",
+                    text = "My Body Mass Index (BMI) score",
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .align(Alignment.TopCenter),
+                        .padding(horizontal = 12.dp),
                     fontWeight = FontWeight.Normal,
-                    fontSize = 20.sp,
+                    fontSize = 17.sp,
                     textAlign = TextAlign.Start
                 )
-                Text(
-                    text = round(calorieNeeds).toString(),
+                Row(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = round(bmi).toString(),
+                        modifier = Modifier
+                            .padding(horizontal = 15.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 40.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = bmiDesc,
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Divider(
                     modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .align(Alignment.BottomStart),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 40.sp,
-                    textAlign = TextAlign.Center
+                        .fillMaxWidth()
+                        .padding(vertical = 2.dp),
+                    color = Color.Gray,
+                    thickness = 2.dp
                 )
-                Text(
-                    text = "Calories",
-                    modifier = Modifier
-                        .padding(horizontal = 12.dp)
-                        .align(Alignment.BottomEnd),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
-                )
+
+                Row(
+                    modifier = Modifier.padding(vertical = 5.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text ="My Goal is to ",
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp),
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                    )
+                    Text(
+                        text = goal,
+                        modifier = Modifier,
+                        fontWeight = FontWeight.SemiBold,
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
+            Summary(calsGoal = round(calorieNeeds).toInt(), calsConsumed =calsConsumed )
         }
     }
 }

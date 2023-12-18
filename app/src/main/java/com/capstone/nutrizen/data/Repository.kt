@@ -19,6 +19,9 @@ class Repository private constructor(
     suspend fun register2(dataRegister: DataRegister) =
         api.register2(dataRegister)
 
+    suspend fun login(email: String, password: String) =
+        api.login(email, password)
+
     suspend fun personalData(
         token: String,
         id: String,
@@ -31,19 +34,25 @@ class Repository private constructor(
         activity: Int,
         goal: Int
     ) =
-        ApiConfig.getApiToken(token).personalData(id, photoUrl, birthDate, age, gender, weight, height, activity, goal)
+        ApiConfig.getApiToken(token)
+            .personalData(id, photoUrl, birthDate, age, gender, weight, height, activity, goal)
 
-    suspend fun personalData2(token: String,id: String,dataForm: DataForm) =
+    suspend fun personalData2(token: String, id: String, dataForm: DataForm) =
         ApiConfig.getApiToken(token).personalData2(id, dataForm)
 
-    /*suspend fun signup(name: String, email: String, password: String) =
-        api.register(name, email, password)*/
+    suspend fun addHistory(
+        token: String,
+        id: String,
+        nameFood: String,
+        eatTime: String,
+        calorie: Int,
+        portion: Double,
+        total: Int
+    ) =
+        ApiConfig.getApiToken(token).addHistory(id, nameFood, eatTime, calorie, portion, total)
 
-    suspend fun login(email: String, password: String) =
-        api.login(email, password)
-
-    suspend fun getHistory(token: String) =
-        ApiConfig.getApiToken(token).getStories()
+    suspend fun getHistory(token: String, id: String, date: String) =
+        ApiConfig.getApiToken(token).getHistory(id, date)
 
 
     //repository for preference of session

@@ -23,12 +23,16 @@ fun Date.toFormattedString(): String {
     val simpleDateFormat = SimpleDateFormat("LLLL dd, yyyy", Locale.getDefault())
     return simpleDateFormat.format(this)
 }
+fun Date.toSimpleString(): String {
+    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    return simpleDateFormat.format(this)
+}
 fun calculateBMR(w: Double, h: Double, age: Int, g: Int, a: Double):Double {
     return   ((10 * w) + (6.25 * h) - (5 * age) + g )*a
 }
 
 fun calculateBMI(h:Double,w:Double):Double{
-    return w/(h/100*h/100)
+    return w/((h/100)*(h/100))
 }
 
 

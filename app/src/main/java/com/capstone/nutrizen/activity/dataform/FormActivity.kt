@@ -580,13 +580,13 @@ fun FormPage(
             Spacer(modifier = Modifier.height(15.dp))
 
             // #Goal dropdown menu
-            val goallist = arrayOf("Select", "Lose Weight", "Stable Weight", "Gain Weight")
+            val goallist = arrayOf("Select", "Lose Weight", "Maintain Weight", "Gain Weight")
             var expandedGoal by remember { mutableStateOf(false) }
             var selectedGoal by remember { mutableStateOf(goallist[0]) }
             var goalId: Int =
                 when (selectedGoal) {
                     "Lose Weight" -> 1
-                    "Stable Weight" -> 2
+                    "Maintain Weight" -> 2
                     "Gain Weight" -> 3
                     else -> 0
                 }

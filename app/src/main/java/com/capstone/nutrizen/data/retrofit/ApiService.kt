@@ -2,14 +2,14 @@ package com.capstone.nutrizen.data.retrofit
 
 import com.capstone.nutrizen.activity.dataform.DataForm
 import com.capstone.nutrizen.activity.register.DataRegister
-import com.capstone.nutrizen.data.retrofit.response.GetStoryResponse
+import com.capstone.nutrizen.data.retrofit.response.AddHistoryResponse
+import com.capstone.nutrizen.data.retrofit.response.GetHistoryResponse
 import com.capstone.nutrizen.data.retrofit.response.LoginResponse
 import com.capstone.nutrizen.data.retrofit.response.PersonalDataResponse
 import com.capstone.nutrizen.data.retrofit.response.SignupResponse
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -59,16 +59,23 @@ interface ApiService {
         @Body dataForm: DataForm
     ): PersonalDataResponse
 
-   /* @FormUrlEncoded
-    @POST("register")
-    suspend fun register(
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("password") password: String
-    ): SignupResponse*/
+    @FormUrlEncoded
+    @POST("scan")
+    suspend fun addHistory(
+        @Field("userId") id: String,
+        @Field("nameFood") nameFood: String,
+        @Field("eatTime") eatTime:String,
+        @Field("calorie") calorie: Int,
+        @Field("portion") portion: Double,
+        @Field("total") total: Int,
+    ): AddHistoryResponse
+    //add field date later
 
-    @GET("stories")
-    suspend fun getStories(
-    ): GetStoryResponse
+    @FormUrlEncoded
+    @POST("scanHistory")
+    suspend fun getHistory(
+        @Field("userId") id: String,
+        @Field("date") date: String,
+    ): GetHistoryResponse
 
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.capstone.nutrizen.data.Repository
-import com.capstone.nutrizen.data.retrofit.response.ListStoryItem
+import com.capstone.nutrizen.data.retrofit.response.HistoryItem
 import com.capstone.nutrizen.data.session.SessionModel
 import com.capstone.nutrizen.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,15 +14,15 @@ import kotlinx.coroutines.launch
 
 class HistoryViewModel(private val repository: Repository) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<UiState<List<ListStoryItem>>> = MutableStateFlow(UiState.Loading)
-    val uiStates: StateFlow<UiState<List<ListStoryItem>>>
+    private val _uiState: MutableStateFlow<UiState<List<HistoryItem>>> = MutableStateFlow(UiState.Loading)
+    val uiStates: StateFlow<UiState<List<HistoryItem>>>
         get() = _uiState
 
-    fun getHistory(token:String){
+    fun getHistory(token:String,id:String,date:String){
         viewModelScope.launch {
             try {
-                val result = repository.getHistory(token)
-                _uiState.value = UiState.Success(result.listStory)
+                val result = repository.getHistory(token,id, date)
+                _uiState.value = UiState.Success(result.history)
             }
             catch (e: Exception){
                 _uiState.value = UiState.Error(e.message.toString())

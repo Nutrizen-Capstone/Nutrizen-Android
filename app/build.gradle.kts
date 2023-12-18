@@ -100,5 +100,6 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation ("com.github.fracassi-marco:JetChart:1.3.7")
 
 }
