@@ -88,7 +88,7 @@ class FormActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var email: String = ""
+
         setContent {
             NutrizenTheme {
                 // A surface container using the 'background' color from the theme

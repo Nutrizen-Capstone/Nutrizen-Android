@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -28,6 +29,7 @@ import androidx.navigation.compose.rememberNavController
 import com.capstone.nutrizen.R
 import com.capstone.nutrizen.ui.navigation.NavigationItem
 import com.capstone.nutrizen.ui.navigation.Screen
+import com.capstone.nutrizen.ui.screen.custom.CustomScreen
 import com.capstone.nutrizen.ui.screen.history.HistoryScreen
 import com.capstone.nutrizen.ui.screen.home.HomeScreen
 import com.capstone.nutrizen.ui.screen.profile.ProfileScreen
@@ -60,6 +62,11 @@ fun NutrizenApp(
         ) {
             composable(Screen.Home.route) {
                 HomeScreen()
+            }
+            composable(Screen.Custom.route) {
+                CustomScreen(
+                    activity= activity,
+                    context = mContext)
             }
             composable(Screen.Scan.route) {
                 ScanScreen(
@@ -98,6 +105,11 @@ private fun BottomBar(
                 title = stringResource(R.string.menu_home),
                 icon = Icons.Default.Home,
                 screen = Screen.Home
+            ),
+            NavigationItem(
+                title = stringResource(R.string.menu_Custom),
+                icon = Icons.Default.LibraryAdd,
+                screen = Screen.Custom
             ),
             NavigationItem(
                 title = stringResource(R.string.menu_scan),

@@ -316,7 +316,8 @@ fun RegisterPage(
                         errorpassword = password.value.text.isEmpty()
                         errorusername = username.value.text.isEmpty()
                         errorpassword2 = password2.value.text.isEmpty()
-                        if (errorpassword == false && errorpassword2 == false && errorusername == false) {
+                        errorname = username.value.text.isEmpty()
+                        if (errorpassword == false && errorpassword2 == false && errorusername == false&& errorname==false) {
                             viewModel.register(
                                 name.value.text,
                                 username.value.text,

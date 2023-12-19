@@ -75,6 +75,7 @@ import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.helper.TensorFLowHelper
 import com.capstone.nutrizen.helper.createImageFile
+import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
 import java.util.Objects
 import kotlin.math.round
@@ -125,6 +126,7 @@ fun ScanPage(
         token = its.token
         id = its.id
     }
+
     var food = ""
     var eatTime = ""
     var portionId = ""
@@ -176,6 +178,13 @@ fun ScanPage(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
+            var loading by remember { mutableStateOf(false) }
+            viewModel.isLoading.observeAsState().value?.let {
+                loading = it
+            }
+            if (loading == true) {
+                Loading(modifier = Modifier)
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
             photoUri?.let {
@@ -381,7 +390,7 @@ fun ScanPage(
             ) {
 
                 // #portion form
-                val portion = remember { mutableStateOf("1") } // must convert to int
+                val portion = remember { mutableStateOf("1") }
                 portionId = portion.value
                 Row(
                     modifier = modifier,

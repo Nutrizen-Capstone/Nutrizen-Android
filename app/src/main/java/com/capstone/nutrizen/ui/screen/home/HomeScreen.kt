@@ -39,6 +39,7 @@ import com.capstone.nutrizen.ui.common.UiState
 import com.capstone.nutrizen.ui.components.Summary
 import java.util.Date
 import kotlin.math.round
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,8 +49,8 @@ fun HomeScreen(
         factory = ViewModelFactory(Injection.provideRepository(context = LocalContext.current))
     ),
 ) {
-    var token=""
-    var id=""
+    var token = ""
+    var id = ""
     val currentDate = Date().toSimpleString()
     var name = ""
     var age = 0
@@ -62,9 +63,10 @@ fun HomeScreen(
     var bmr = 0.0
     var calorieNeeds = 0.0
     var calsConsumed = 0
+    var calsRemaining = 0
     viewModel.getSession().observeAsState().value?.let { its ->
-        token=its.token
-        id=its.id
+        token = its.token
+        id = its.id
         name = its.name
         age = its.age
         genderId = its.gender
@@ -88,13 +90,21 @@ fun HomeScreen(
             2 -> -161
             else -> 0
         }
-    var goal :String =
-        when(goalId){
-            1->"Lose Weight"
-            2->"Maintain Weight"
-            3->"Gain Weight"
-            else->"empty"
+    var goal: String =
+        when (goalId) {
+            1 -> "Lose Weight"
+            2 -> "Maintain Weight"
+            3 -> "Gain Weight"
+            else -> "empty"
         }
+    bmr = calculateBMR(weight, height, age, gender, activity)
+    calorieNeeds =
+        when (goalId) {
+            1 -> bmr * 4 / 5
+            3 -> bmr + 500
+            else -> bmr
+        }
+
     bmi = calculateBMI(height, weight)
     var bmiDesc = if (bmi < 18.5) {
         "Underweight"
@@ -106,22 +116,17 @@ fun HomeScreen(
         "Normal"
     }
 
-    bmr = calculateBMR(weight, height, age, gender, activity)
-    calorieNeeds =
-        when (goalId) {
-            1 -> bmr * 4 / 5
-            3 -> bmr + 500
-            else -> bmr
-        }
-
+    viewModel.getHistory(token, id, currentDate)
     viewModel.uiStates.collectAsState().value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
-                viewModel.getHistory(token,id,currentDate)
+                viewModel.getHistory(token, id, currentDate)
             }
+
             is UiState.Success -> {
-                uiState.data.forEach{calsConsumed+=it.total}
+                uiState.data.forEach { calsConsumed += it.total }
             }
+
             is UiState.Error -> {
                 val TAG = "errors"
                 Log.d(TAG, "onFAILED: ${uiState.copy()}")
@@ -208,12 +213,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.Bottom
                 ) {
                     Text(
-                        text ="My Goal is to ",
+                        text = "My Goal is to ",
                         modifier = Modifier
                             .padding(horizontal = 8.dp),
                         fontWeight = FontWeight.Normal,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center,
+                        fontStyle = FontStyle.Italic,
                     )
                     Text(
                         text = goal,
@@ -225,7 +231,54 @@ fun HomeScreen(
                     )
                 }
             }
-            Summary(calsGoal = round(calorieNeeds).toInt(), calsConsumed =calsConsumed )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            if (calsConsumed > 0) {
+                calsRemaining = calorieNeeds.roundToInt() - calsConsumed
+                if (calsRemaining > 0) {
+                    var calsRemainingPercent: Float =
+                        ((calsRemaining / calorieNeeds) * 1000).toFloat()
+                    var calsConsumedPercent: Float =
+                        ((calsConsumed / calorieNeeds) * 1000).toFloat()
+                    var percent = ((calsConsumed / calorieNeeds) * 100).roundToInt()
+                    Summary(
+                        calsGoal = calorieNeeds.roundToInt(),
+                        calsConsumed = calsConsumed,
+                        calsRemaining = calsRemaining,
+                        calsRemainingPercent = calsRemainingPercent,
+                        calsConsumedPercent = calsConsumedPercent,
+                        percent = percent
+                    )
+                }else if(calsRemaining==0){
+                    Summary(
+                        calsGoal = calorieNeeds.roundToInt(),
+                        calsConsumed = calsConsumed,
+                        calsRemaining = calsRemaining,
+                        calsRemainingPercent = 0f,
+                        calsConsumedPercent =100f,
+                        percent = 100
+                    )
+                }else{
+                    var percent = ((calsConsumed / calorieNeeds) * 100).roundToInt()
+                    Summary(
+                        calsGoal = calorieNeeds.roundToInt(),
+                        calsConsumed = calsConsumed,
+                        calsRemaining = calsRemaining,
+                        calsRemainingPercent = 0f,
+                        calsConsumedPercent = 100f,
+                        percent = percent
+                    )
+                }
+            } else {
+                Summary(
+                    calsGoal = calorieNeeds.roundToInt(),
+                    calsConsumed = 0,
+                    calsRemaining = calorieNeeds.roundToInt(),
+                    calsRemainingPercent = 100f,
+                    calsConsumedPercent = 0f,
+                    percent = 0
+                )
+            }
         }
     }
 }

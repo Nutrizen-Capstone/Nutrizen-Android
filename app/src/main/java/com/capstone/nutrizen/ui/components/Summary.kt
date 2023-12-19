@@ -4,8 +4,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,11 +33,12 @@ import io.jetchart.pie.renderer.FilledSliceDrawer
 fun Summary(
     calsGoal: Int,
     calsConsumed: Int,
+    calsRemaining: Int,
+    calsRemainingPercent: Float,
+    calsConsumedPercent: Float,
+    percent: Int,
     modifier: Modifier = Modifier,
 ) {
-    var calsRemaining = calsGoal-calsConsumed
-    var calsRemainingPercent = ((calsRemaining/calsGoal)*100).toFloat()
-    var calsConsumedPercent = ((calsConsumed/calsGoal)*100).toFloat()
 
     Column(
         modifier = modifier
@@ -44,40 +51,18 @@ fun Summary(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "My Calories Goal",
+            text = "Summary",
             modifier = Modifier
-                .padding(horizontal = 12.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 30.dp, vertical = 7.dp),
             fontWeight = FontWeight.Normal,
-            fontSize = 17.sp,
+            fontSize = 20.sp,
             textAlign = TextAlign.Start
         )
         Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = calsGoal.toString(),
-                modifier = Modifier
-                    .padding(horizontal = 15.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 40.sp,
-                textAlign = TextAlign.Center,
-
-                )
-            Text(
-                text = "Calories",
-                modifier = Modifier
-                    .padding(horizontal = 12.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-        Row(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
             PieChart(
                 pies = Pies(
@@ -86,19 +71,97 @@ fun Summary(
                         Slice(calsRemainingPercent, Color.Yellow),
                     )
                 ),
-                modifier = Modifier,
+                modifier = Modifier
+                    .width(150.dp)
+                    .height(150.dp),
                 animation = fadeInAnimation(4000),
-                sliceDrawer = FilledSliceDrawer(thickness = 60f)
+                sliceDrawer = FilledSliceDrawer(thickness = 50f)
             )
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "$percent%",
+                    modifier = Modifier
+                        .padding(vertical = 2.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = "of $calsGoal",
+                    modifier = Modifier
+                        .padding(vertical = 2.dp),
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = "Calories Goal",
+                    modifier = Modifier
+                        .padding(vertical = 2.dp),
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(15.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row {
+                Icon(imageVector = Icons.Default.Circle, tint = Color.Blue, contentDescription = null)
+                Text(
+                    text = "Calory Consumed",
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp),
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
             Text(
                 text = calsConsumed.toString(),
                 modifier = Modifier
                     .padding(horizontal = 12.dp),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row {
+                Icon(imageVector = Icons.Default.Circle, tint = Color.Yellow, contentDescription = null)
+                Text(
+                    text = "Calory Remaining",
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp),
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 15.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Text(
+                text = calsRemaining.toString(),
+                modifier = Modifier
+                    .padding(horizontal = 12.dp),
+                fontWeight = FontWeight.Normal,
+                fontSize = 20.sp,
                 textAlign = TextAlign.Center
             )
         }
+        Spacer(modifier = Modifier.height(15.dp))
     }
-
 }

@@ -18,10 +18,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assignment
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.R
-import com.capstone.nutrizen.activity.dataform.FormActivity
+import com.capstone.nutrizen.activity.dataresult.MyDataActivity
 import com.capstone.nutrizen.activity.login.LoginActivity
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
@@ -147,7 +147,7 @@ fun ProfileScreen(
                     .height(50.dp)
                     .width(350.dp)
                     .clickable(onClick = {
-                        context.startActivity(Intent(context, FormActivity::class.java))
+                        context.startActivity(Intent(context, MyDataActivity::class.java))
                     })
                     .background(
                         color = MaterialTheme.colorScheme.primary,
@@ -164,7 +164,37 @@ fun ProfileScreen(
                     tint = Color.White
                 )
                 Text(
-                    text = stringResource(id = R.string.reassign),
+                    text = stringResource(id = R.string.btn_mydata),
+                    fontSize = 18.sp,
+                    modifier = Modifier,
+                    color = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row(
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(350.dp)
+                    .clickable(onClick = {
+
+                    })
+                    .background(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.medium
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DeleteForever,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    tint = Color.White
+                )
+                Text(
+                    text = stringResource(id = R.string.btn_delete),
                     fontSize = 18.sp,
                     modifier = Modifier,
                     color = Color.White
@@ -204,32 +234,6 @@ fun ProfileScreen(
             }
             Spacer(modifier = Modifier.height(20.dp))
 
-            // coba generate data
-            Column(
-                modifier = Modifier
-                    .height(400.dp).width(400.dp).padding(20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(text = birth)
-                Text(text = age.toString())
-                Text(text = gender.toString())
-                Text(text = height.toString())
-                Text(text = weight.toString())
-                Text(text = activitys.toString())
-                Text(text = goal.toString())
-                Text(text = token)
-                Spacer(modifier = Modifier.height(20.dp))
-                Button(
-                    onClick = {
-                        viewModel.logout()
-                        context.startActivity(Intent(context, LoginActivity::class.java))
-                        activity.finish()
-                    })
-                {
-                    Text(text = "Logout")
-                }
-            }
         }
     }
 }

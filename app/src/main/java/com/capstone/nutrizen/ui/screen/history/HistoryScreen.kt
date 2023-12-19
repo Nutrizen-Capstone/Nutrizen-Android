@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.util.Log
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -24,7 +23,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.EditCalendar
+import androidx.compose.material.icons.filled.SearchOff
+import androidx.compose.material.icons.outlined.ManageSearch
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,11 +52,14 @@ import com.capstone.nutrizen.R
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.data.retrofit.response.HistoryItem
+import com.capstone.nutrizen.helper.calculateBMR
 import com.capstone.nutrizen.helper.toSimpleString
 import com.capstone.nutrizen.ui.common.UiState
 import com.capstone.nutrizen.ui.components.HistoryItem
+import com.capstone.nutrizen.ui.components.Summary
 import java.util.Calendar
 import java.util.Date
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,11 +73,49 @@ fun HistoryScreen(
 ) {
 
     var token = ""
-    var id=""
+    var id = ""
+    var age = 0
+    var genderId = 0
+    var height = 0.0
+    var weight = 0.0
+    var activityId = 0
+    var goalId = 0
+    var bmr = 0.0
+    var calorieNeeds = 0.0
+    var calsConsumed = 0
+    var calsRemaining = 0
     viewModel.getSession().observeAsState().value?.let { its ->
         token = its.token
         id = its.id
+        age = its.age
+        genderId = its.gender
+        height = its.height
+        weight = its.weight
+        activityId = its.activity
+        goalId = its.goal
     }
+    var activitys: Double =
+        when (activityId) {
+            1 -> 1.2
+            2 -> 1.375
+            3 -> 1.550
+            4 -> 1.725
+            5 -> 1.9
+            else -> 0.0
+        }
+    var gender: Int =
+        when (genderId) {
+            1 -> 5
+            2 -> -161
+            else -> 0
+        }
+    bmr = calculateBMR(weight, height, age, gender, activitys)
+    calorieNeeds =
+        when (goalId) {
+            1 -> bmr * 4 / 5
+            3 -> bmr + 500
+            else -> bmr
+        }
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -107,15 +148,17 @@ fun HistoryScreen(
                 { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
                     val newDate = Calendar.getInstance()
                     newDate.set(year, month, dayOfMonth)
-                    selectedDate.value = "$year-${month+1}-$dayOfMonth"
-                    viewModel.getHistory(token,id,selectedDate.value)
+                    selectedDate.value = "$year-${month + 1}-$dayOfMonth"
+                    viewModel.getHistory(token, id, selectedDate.value)
                 },
                 year,
                 month,
                 day
             )
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -134,7 +177,7 @@ fun HistoryScreen(
                         .width(55.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.EditCalendar,
+                        imageVector = Icons.Outlined.ManageSearch,
                         contentDescription = "icon",
                         modifier = modifier
                             .fillMaxSize()
@@ -163,23 +206,59 @@ fun HistoryScreen(
         }
         Spacer(modifier = Modifier.height(15.dp))
 
-        viewModel.getHistory(token,id, selectedDate.value)
+        viewModel.getHistory(token, id, selectedDate.value)
         viewModel.uiStates.collectAsState().value.let { uiState ->
             when (uiState) {
                 is UiState.Loading -> {
-                    viewModel.getHistory(token,id, selectedDate.value)
+                    viewModel.getHistory(token, id, selectedDate.value)
                 }
 
                 is UiState.Success -> {
-                    HistoryContent(list = uiState.data, token,id,context, activity)
+                    if (uiState.data.error) {
+                        Spacer(modifier = Modifier.height(30.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+
+                            Column(
+                                modifier = Modifier
+                                    .height(200.dp)
+                                    .width(200.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        shape = MaterialTheme.shapes.medium
+                                    ),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .height(100.dp)
+                                        .width(100.dp),
+                                    imageVector = Icons.Default.SearchOff,
+                                    contentDescription = null
+                                )
+                                Text(text = "Data Not Found", fontSize = 15.sp)
+
+                            }
+                        }
+                    } else
+                        HistoryContent(list = uiState.data.history,calorieNeeds, token, id, context, activity)
                 }
 
                 is UiState.Error -> {
                     val TAG = "errors"
                     Log.d(TAG, "onFAILED: ${uiState.copy()}")
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Button(onClick = { viewModel.getHistory(token,id, selectedDate.value)
-                            Toast.makeText(context, selectedDate.value, Toast.LENGTH_SHORT).show()}) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(onClick = {
+                            viewModel.getHistory(token, id, selectedDate.value)
+                        }) {
                             Text(text = "retry")
                         }
                     }
@@ -193,8 +272,9 @@ fun HistoryScreen(
 @Composable
 fun HistoryContent(
     list: List<HistoryItem>,
-    token:String,
-    id:String,
+    calorieNeeds:Double,
+    token: String,
+    id: String,
     context: Context,
     activity: ComponentActivity,
     modifier: Modifier = Modifier,
@@ -202,10 +282,9 @@ fun HistoryContent(
         factory = ViewModelFactory(Injection.provideRepository(context = LocalContext.current))
     ),
 ) {
-    var sum = 0
-    list.forEach {
-        sum += it.total
-    }
+    var calsConsumed = 0
+    list.forEach { calsConsumed += it.total }
+    var calsRemaining: Int
 
     Column(
         modifier = modifier
@@ -218,16 +297,62 @@ fun HistoryContent(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             item {
-
+                if (calsConsumed > 0) {
+                    calsRemaining = calorieNeeds.roundToInt() - calsConsumed
+                    if (calsRemaining > 0) {
+                        var calsRemainingPercent: Float =
+                            ((calsRemaining / calorieNeeds) * 1000).toFloat()
+                        var calsConsumedPercent: Float =
+                            ((calsConsumed / calorieNeeds) * 1000).toFloat()
+                        var percent = ((calsConsumed / calorieNeeds) * 100).roundToInt()
+                        Summary(
+                            calsGoal = calorieNeeds.roundToInt(),
+                            calsConsumed = calsConsumed,
+                            calsRemaining = calsRemaining,
+                            calsRemainingPercent = calsRemainingPercent,
+                            calsConsumedPercent = calsConsumedPercent,
+                            percent = percent
+                        )
+                    }else if(calsRemaining==0){
+                        Summary(
+                            calsGoal = calorieNeeds.roundToInt(),
+                            calsConsumed = calsConsumed,
+                            calsRemaining = calsRemaining,
+                            calsRemainingPercent = 0f,
+                            calsConsumedPercent =100f,
+                            percent = 100
+                        )
+                    }else{
+                        var percent = ((calsConsumed / calorieNeeds) * 100).roundToInt()
+                        Summary(
+                            calsGoal = calorieNeeds.roundToInt(),
+                            calsConsumed = calsConsumed,
+                            calsRemaining = calsRemaining,
+                            calsRemainingPercent = 0f,
+                            calsConsumedPercent = 100f,
+                            percent = percent
+                        )
+                    }
+                } else {
+                    Summary(
+                        calsGoal = calorieNeeds.roundToInt(),
+                        calsConsumed = 0,
+                        calsRemaining = calorieNeeds.roundToInt(),
+                        calsRemainingPercent = 100f,
+                        calsConsumedPercent = 0f,
+                        percent = 0
+                    )
+                }
             }
             items(list) { data ->
                 HistoryItem(
                     food = data.nameFood,
                     time = data.eatTime,
                     date = data.date,
-                    cals =data.calorie,
+                    cals = data.calorie,
                     portion = data.portion,
-                    total = data.total
+                    total = data.total,
+
                 )
             }
         }
