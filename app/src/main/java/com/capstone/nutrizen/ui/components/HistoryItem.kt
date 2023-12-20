@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -33,13 +34,14 @@ fun HistoryItem(
     cals: Int,
     portion: Double,
     total: Int,
+    createdAt: String,
     modifier: Modifier = Modifier,
 ) {
 
     Column(
         modifier = modifier
             .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = MaterialTheme.shapes.small
             )
             .fillMaxWidth()
@@ -57,7 +59,7 @@ fun HistoryItem(
                     imageVector = Icons.Default.AccessTime,
                     contentDescription = null
                 )
-                Text(text = time, fontSize = 15.sp)
+                Text(modifier=Modifier.padding(horizontal = 3.dp),text = time, fontSize = 15.sp)
             }
             Row(modifier = Modifier) {
                 Icon(
@@ -67,7 +69,7 @@ fun HistoryItem(
                     imageVector = Icons.Default.CalendarToday,
                     contentDescription = null
                 )
-                Text(text = date, fontSize = 15.sp)
+                Text(modifier=Modifier.padding(horizontal = 3.dp),text = date, fontSize = 15.sp)
             }
         }
         Divider(
@@ -81,7 +83,7 @@ fun HistoryItem(
             Icon(
                 modifier = Modifier
                     .height(30.dp)
-                    .width(30.dp),
+                    .width(30.dp).padding(horizontal = 5.dp),
                 imageVector = Icons.Default.Fastfood,
                 contentDescription = null
             )
@@ -115,6 +117,7 @@ fun HistoryItem(
             Text(text = "Total Calories", fontStyle= FontStyle.Italic, )
             Text(text = total.toString())
         }
+        Text(modifier= Modifier.fillMaxWidth().padding(3.dp),text = createdAt, fontSize = 10.sp, fontStyle= FontStyle.Italic, textAlign = TextAlign.End )
 
     }
 }

@@ -120,7 +120,7 @@ fun HomeScreen(
     viewModel.uiStates.collectAsState().value.let { uiState ->
         when (uiState) {
             is UiState.Loading -> {
-                viewModel.getHistory(token, id, currentDate)
+                    viewModel.getHistory(token, id, currentDate)
             }
 
             is UiState.Success -> {
@@ -146,10 +146,11 @@ fun HomeScreen(
                         .padding(horizontal = 20.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onTertiary
                 )
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.tertiary)
         )
         Column(
             modifier = Modifier
@@ -160,11 +161,11 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        color = MaterialTheme.colorScheme.tertiaryContainer,
                         shape = MaterialTheme.shapes.medium
                     )
                     .padding(10.dp)
@@ -231,7 +232,7 @@ fun HomeScreen(
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             if (calsConsumed > 0) {
                 calsRemaining = calorieNeeds.roundToInt() - calsConsumed

@@ -2,6 +2,7 @@ package com.capstone.nutrizen.ui.screen.profile
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,18 +21,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocalGroceryStore
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
@@ -48,6 +55,7 @@ import com.capstone.nutrizen.activity.login.LoginActivity
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
+import es.dmoral.toasty.Toasty
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,7 +146,7 @@ fun ProfileScreen(
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
                     modifier = modifier,
-                    )
+                )
             }
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -161,13 +169,13 @@ fun ProfileScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
                     text = stringResource(id = R.string.btn_mydata),
                     fontSize = 18.sp,
                     modifier = Modifier,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -177,7 +185,9 @@ fun ProfileScreen(
                     .height(50.dp)
                     .width(350.dp)
                     .clickable(onClick = {
-
+                        Toasty
+                            .info(context, "Coming soon", Toast.LENGTH_SHORT)
+                            .show()
                     })
                     .background(
                         color = MaterialTheme.colorScheme.primary,
@@ -187,50 +197,121 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.Start,
             ) {
                 Icon(
-                    imageVector = Icons.Default.DeleteForever,
+                    imageVector = Icons.Default.LocalGroceryStore,
                     contentDescription = null,
                     modifier = Modifier
                         .padding(horizontal = 16.dp),
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
                 Text(
-                    text = stringResource(id = R.string.btn_delete),
+                    text = stringResource(id = R.string.btn_catalog),
                     fontSize = 18.sp,
                     modifier = Modifier,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
 
-            Row(
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(350.dp)
-                    .clickable(onClick = {
-                        viewModel.logout()
-                        context.startActivity(Intent(context, LoginActivity::class.java))
-                        activity.finish()
-                    })
-                    .background(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.medium
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Logout,
-                    contentDescription = null,
+            Row {
+                var showDialog by remember { mutableStateOf(false) }
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text("Are you sure you want to delete this account?") },
+                        text = { Text("This action cannot be undone") },
+                        confirmButton = {
+                            TextButton(onClick = { /* TODO */}) {
+                                Text("Delete it".uppercase())
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDialog = false }) {
+                                Text("Cancel".uppercase())
+                            }
+                        },
+                    )
+                }
+                Row(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp),
-                    tint = Color.White
-                )
-                Text(
-                    text = stringResource(id = R.string.logout),
-                    fontSize = 18.sp,
-                    modifier = Modifier,
-                    color = Color.White
-                )
+                        .height(50.dp)
+                        .width(350.dp)
+                        .clickable(onClick = {
+                            showDialog = showDialog.not()
+                        })
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteForever,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Text(
+                        text = stringResource(id = R.string.btn_delete),
+                        fontSize = 18.sp,
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row {
+                var showDialog by remember { mutableStateOf(false) }
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text("Are you sure you want to Logout?") },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                viewModel.logout()
+                                context.startActivity(Intent(context, LoginActivity::class.java))
+                                activity.finish()
+                            }) {
+                                Text("Yes".uppercase())
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showDialog = false }) {
+                                Text("Cancel".uppercase())
+                            }
+                        },
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(350.dp)
+                        .clickable(onClick = {
+                            showDialog = showDialog.not()
+                        })
+                        .background(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = MaterialTheme.shapes.medium
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Logout,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                    Text(
+                        text = stringResource(id = R.string.logout),
+                        fontSize = 18.sp,
+                        modifier = Modifier,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(20.dp))
 

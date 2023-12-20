@@ -46,28 +46,4 @@ class RegisterViewModel(private val repository: Repository) : ViewModel() {
             }
         }
     }
-
-    fun register2(name: String, email: String, password: String,confPassword:String) {
-        _isLoading.value=true
-        viewModelScope.launch {
-            viewModelScope.launch {
-                try {
-                    //get success message
-                    val dataRegister = DataRegister(name, email, password, confPassword)
-                    val response = repository.register2(dataRegister)
-                    _signupResponse.postValue(response)
-                    _isLoading.value= false
-                    Log.d(TAG, "onSuccess: ${response.message}")
-                } catch (e: HttpException) {
-                    //get error message
-                    val jsonInString = e.response()?.errorBody()?.string()
-                    val errorBody = Gson().fromJson(jsonInString, SignupResponse::class.java)
-                    val errorMessage = errorBody.message
-                    _signupResponse.postValue(errorBody)
-                    _isLoading.value= false
-                    Log.d(TAG, "onError: $errorMessage")
-                }
-            }
-        }
-    }
 }

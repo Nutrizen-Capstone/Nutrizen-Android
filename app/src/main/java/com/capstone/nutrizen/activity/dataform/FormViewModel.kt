@@ -84,60 +84,6 @@ class FormViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    fun save2(
-        token: String,
-        id: String,
-        photoUrl: String,
-        birthDate: String,
-        age: Int,
-        gender: Int,
-        height: Double,
-        weight: Double,
-        activity: Int,
-        goal: Int,
-        email: String,
-        name: String,
-    ) {
-        _isLoading.value = true
-        viewModelScope.launch {
-            try {
-                //get success message
-                val dataForm: DataForm = DataForm(photoUrl, birthDate, age, gender, height, weight, activity, goal)
-                val response = repository.personalData2(
-                    token,
-                    id,
-                    dataForm
-                )
-                _formResponse.postValue(response)
-                _isLoading.value = false
-
-                saveSession(
-                    SessionModel(
-                        id,
-                        name,
-                        token,
-                        email,
-                        true,
-                        true,
-                        birthDate,
-                        age,
-                        gender,
-                        height,
-                        weight,
-                        activity,
-                        goal
-                    )
-                )
-                Log.d(TAG, "onSuccess: ${response.message}")
-            } catch (e: Exception) {
-                //get error message
-                _isLoading.value = false
-                Log.d(TAG, "onError: $e")
-            }
-        }
-    }
-
-
     fun getSession(): LiveData<SessionModel> {
         return repository.getSession().asLiveData()
     }

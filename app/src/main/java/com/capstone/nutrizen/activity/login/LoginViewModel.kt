@@ -10,6 +10,9 @@ import com.capstone.nutrizen.data.Repository
 import com.capstone.nutrizen.data.retrofit.response.LoginResponse
 import com.capstone.nutrizen.data.session.SessionModel
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -74,6 +77,16 @@ class LoginViewModel(private val repository: Repository) : ViewModel() {
     private fun saveSession(user: SessionModel) {
         viewModelScope.launch {
             repository.saveSession(user)
+        }
+    }
+
+    private val mutableStateFlow = MutableStateFlow(true)
+    val splash = mutableStateFlow.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            delay(2000)
+            mutableStateFlow.value = false
         }
     }
 }

@@ -77,6 +77,7 @@ import com.capstone.nutrizen.helper.TensorFLowHelper
 import com.capstone.nutrizen.helper.createImageFile
 import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
+import es.dmoral.toasty.Toasty
 import java.util.Objects
 import kotlin.math.round
 
@@ -99,9 +100,9 @@ class ScanActivity : ComponentActivity() {
 
                     viewModel.addResponse.observe(this) {
                         if (it.error) {
-                            Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
+                            Toasty.error(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                            Toasty.success(this, it.message, Toast.LENGTH_SHORT).show()
                             finish()
                         }
                     }
@@ -166,10 +167,11 @@ fun ScanPage(
                         .padding(horizontal = 20.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onTertiary
                 )
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.tertiary)
         )
         Column(
             modifier = Modifier
@@ -202,7 +204,7 @@ fun ScanPage(
                     } catch (e: Exception) {
                         bitmap = null
                         photoUri = null
-                        Toast.makeText(LocalContext.current, "${e.message}", Toast.LENGTH_SHORT)
+                        Toasty.error(LocalContext.current, "${e.message}", Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
@@ -239,6 +241,7 @@ fun ScanPage(
                         modifier = modifier
                             .fillMaxSize()
                             .padding(20.dp),
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -323,7 +326,7 @@ fun ScanPage(
                             .width(350.dp)
                             .padding(10.dp)
                             .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
+                                color = MaterialTheme.colorScheme.tertiaryContainer,
                                 shape = MaterialTheme.shapes.medium
                             ),
                         horizontalArrangement = Arrangement.Start,
@@ -338,7 +341,7 @@ fun ScanPage(
                                 .padding(horizontal = 10.dp),
                         )
                         Text(
-                            text = it,
+                            text = "$it ($calorie Cals/100 g)",
                             modifier = Modifier
                                 .padding(horizontal = 10.dp),
                             fontWeight = FontWeight.SemiBold,
@@ -355,7 +358,7 @@ fun ScanPage(
                         .width(350.dp)
                         .padding(10.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.tertiaryContainer,
                             shape = MaterialTheme.shapes.medium
                         ),
                     horizontalArrangement = Arrangement.Center,
@@ -437,7 +440,7 @@ fun ScanPage(
                         Modifier
                             .padding(horizontal = 10.dp)
                             .background(
-                                color = MaterialTheme.colorScheme.primaryContainer,
+                                color = MaterialTheme.colorScheme.secondaryContainer,
                                 shape = MaterialTheme.shapes.small
                             )
                             .height(55.dp)
@@ -524,10 +527,14 @@ fun ScanPage(
             }
             Spacer(modifier = Modifier.height(15.dp))
 
+            var isComplete = false
+            if(eatTime != "Select"){
+                isComplete=true
+            }
             Button(
                 onClick = {
                     if (eatTime == "Select") {
-                        Toast.makeText(context, "select eating time first!", Toast.LENGTH_SHORT)
+                        Toasty.warning(context, "select eating time first!", Toast.LENGTH_SHORT)
                             .show()
                     } else {
                         try {
@@ -536,10 +543,10 @@ fun ScanPage(
                                 token, id, food, eatTime, calorie, portionId.toDouble(), total
                             )
                         } catch (e: Exception) {
-                            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                            Toasty.error(context, e.message.toString(), Toast.LENGTH_SHORT).show()
                         }
                     }
-                }, modifier = Modifier.width(300.dp), enabled = photoUri != null
+                }, modifier = Modifier.width(300.dp), enabled = photoUri != null && isComplete
             ) {
                 Text(stringResource(id = R.string.btn_toAdd))
             }

@@ -1,7 +1,5 @@
 package com.capstone.nutrizen.data
 
-import com.capstone.nutrizen.activity.dataform.DataForm
-import com.capstone.nutrizen.activity.register.DataRegister
 import com.capstone.nutrizen.data.retrofit.ApiConfig
 import com.capstone.nutrizen.data.retrofit.ApiService
 import com.capstone.nutrizen.data.session.SessionModel
@@ -15,9 +13,6 @@ class Repository private constructor(
     //repository for api request
     suspend fun register(name: String, email: String, password: String, confPassword: String) =
         api.register(name, email, password, confPassword)
-
-    suspend fun register2(dataRegister: DataRegister) =
-        api.register2(dataRegister)
 
     suspend fun login(email: String, password: String) =
         api.login(email, password)
@@ -36,9 +31,6 @@ class Repository private constructor(
     ) =
         ApiConfig.getApiToken(token)
             .personalData(id, photoUrl, birthDate, age, gender, weight, height, activity, goal)
-
-    suspend fun personalData2(token: String, id: String, dataForm: DataForm) =
-        ApiConfig.getApiToken(token).personalData2(id, dataForm)
 
     suspend fun addHistory(
         token: String,

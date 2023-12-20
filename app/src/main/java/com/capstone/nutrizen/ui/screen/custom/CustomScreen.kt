@@ -1,9 +1,11 @@
 package com.capstone.nutrizen.ui.screen.custom
 
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,8 +56,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.R
+import com.capstone.nutrizen.activity.main.MainActivity
 import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
+import com.capstone.nutrizen.ui.components.Loading
+import es.dmoral.toasty.Toasty
 import kotlin.math.round
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,6 +79,17 @@ fun CustomScreen(
         token = its.token
         id = its.id
     }
+
+    viewModel.addResponse.observeAsState().value?.let {
+        if (it.error) {
+            Toasty.error(context, "failed, " + it.message, Toast.LENGTH_SHORT).show()
+        } else {
+            Toasty.success(context, it.message, Toast.LENGTH_SHORT).show()
+            context.startActivity(Intent(context, MainActivity::class.java))
+            activity.finish()
+        }
+    }
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -95,7 +111,16 @@ fun CustomScreen(
                 .verticalScroll(rememberScrollState())
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
+
+            var loading by remember { mutableStateOf(false) }
+            viewModel.isLoading.observeAsState().value?.let {
+                loading = it
+            }
+            if (loading == true) {
+                Loading(modifier = Modifier)
+            }
 
             Icon(
                 imageVector = Icons.Outlined.Dining,
@@ -104,10 +129,10 @@ fun CustomScreen(
                     .height(200.dp)
                     .width(200.dp)
                     .padding(vertical = 10.dp),
+                tint = MaterialTheme.colorScheme.tertiary
             )
             Text(
                 text = stringResource(id = R.string.custom_description),
-                color = Color.DarkGray,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
             )
@@ -134,6 +159,7 @@ fun CustomScreen(
                         modifier = modifier
                             .fillMaxSize()
                             .padding(7.dp),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
                 OutlinedTextField(
@@ -240,7 +266,7 @@ fun CustomScreen(
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.small
                         )
                         .height(55.dp)
@@ -295,7 +321,7 @@ fun CustomScreen(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTime) },
                         modifier = Modifier
                             .menuAnchor()
-                            .width(230.dp),
+                            .fillMaxWidth(),
                         label = {
                             Text(
                                 text = stringResource(id = R.string.form_eatTime),
@@ -318,28 +344,35 @@ fun CustomScreen(
             Spacer(modifier = Modifier.height(15.dp))
 
             var iscomplete = false
-            if (food.value.text.trim()
-                    .isEmpty() == false && calorie.value.text.isEmpty() == false && portion.value.text.isEmpty() == false && selectedTime != "Select"
+            if (!food.value.text.trim().isEmpty() && !calorie.value.text.isEmpty() && !portion.value.text.isEmpty() && selectedTime != "Select"
             ) {
                 iscomplete = true
             }
             Button(
                 onClick = {
-                    try {
-                        var total =
-                            round(portion.value.text.toDouble() * calorie.value.text.toInt())
-                        viewModel.addHistory(
-                            token,
-                            id,
-                            food.value.text,
-                            selectedTime,
-                            calorie.value.text.toInt(),
-                            portion.value.text.toDouble(),
-                            total.toInt()
+                    if (!food.value.text.trim().isEmpty() ){
+                        try {
+                            var total =
+                                round(portion.value.text.toDouble() * calorie.value.text.toInt())
+                            viewModel.addHistory(
+                                token,
+                                id,
+                                food.value.text,
+                                selectedTime,
+                                calorie.value.text.toInt(),
+                                portion.value.text.toDouble(),
+                                total.toInt()
+                            )
+                        } catch (e: Exception) {
+                            Toasty.error(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    }else{
+                        Toasty.warning(
+                            context,
+                            "Failed, fill it carefully",
+                            Toast.LENGTH_SHORT
                         )
-                        Toast.makeText(context,"Success, dont spam it", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
+                            .show()
                     }
                 }, modifier = Modifier.width(300.dp), enabled = iscomplete
             ) {

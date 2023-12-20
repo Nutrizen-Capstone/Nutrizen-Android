@@ -82,4 +82,5 @@
     <string name="form_food">Name of Food</string>
     <string name="form_calorie">"Calories/100g "</string>
     <string name="custom_alert">***You can find calories/100 g (serving) by googling it, read reference or nutrition facts of product</string>
+    <string name="btn_catalog">Dietary Supplement Catalog</string>
 </resources>

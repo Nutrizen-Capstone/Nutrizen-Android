@@ -100,6 +100,8 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
 
     implementation ("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation ("androidx.core:core-splashscreen:1.0.0-beta02")
     implementation ("com.github.fracassi-marco:JetChart:1.3.7")
+    implementation ("com.github.GrenderG:Toasty:1.3.0")
 
 }

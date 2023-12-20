@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -67,6 +69,7 @@ import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
+import es.dmoral.toasty.Toasty
 
 class RegisterActivity : ComponentActivity() {
     private val viewModel by viewModels<RegisterViewModel> {
@@ -88,9 +91,9 @@ class RegisterActivity : ComponentActivity() {
         }
         viewModel.signupResponse.observe(this) {
             if (it.error == true) {
-                Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
+                Toasty.error(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                Toasty.success(this, it.message.toString(), Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -157,11 +160,12 @@ fun RegisterPage(
                 Text(
                     text = stringResource(id = R.string.app_name),
                     style = TextStyle(fontSize = 50.sp, fontFamily = FontFamily.Serif)
+                    ,color = colorResource(id = R.color.greens)
                 )
             }
             Text(
                 text = "Register",
-                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive)
+                style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive),
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -186,7 +190,7 @@ fun RegisterPage(
                     Icon(imageVector = Icons.Default.Email, contentDescription = null)
                 }
             )
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             OutlinedTextField(
                 modifier = modifier,
@@ -208,7 +212,7 @@ fun RegisterPage(
                     Icon(imageVector = Icons.Default.Person, contentDescription = null)
                 }
             )
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             OutlinedTextField(
                 modifier = modifier,
@@ -254,11 +258,11 @@ fun RegisterPage(
                 isError = errorpassword,
                 supportingText = {
                     if (errorpassword) {
-                        Text(text = "Please enter your password")
+                        Text(text = "Minimum 8 characters")
                     }
                 }
             )
-            Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             OutlinedTextField(
                 modifier = modifier,
@@ -304,7 +308,7 @@ fun RegisterPage(
                 isError = errorpassword2,
                 supportingText = {
                     if (errorpassword2) {
-                        Text(text = "Please enter your confirm password")
+                        Text(text = "Minimum 8 characters")
                     }
                 }
             )
@@ -313,21 +317,25 @@ fun RegisterPage(
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {
-                        errorpassword = password.value.text.isEmpty()
-                        errorusername = username.value.text.isEmpty()
-                        errorpassword2 = password2.value.text.isEmpty()
-                        errorname = username.value.text.isEmpty()
-                        if (errorpassword == false && errorpassword2 == false && errorusername == false&& errorname==false) {
-                            viewModel.register(
-                                name.value.text,
-                                username.value.text,
-                                password.value.text,
-                                password2.value.text
-                            )
+                        errorpassword = password.value.text.trim().isEmpty()|| password.value.text.length<8
+                        errorusername = username.value.text.trim().isEmpty()
+                        errorpassword2 = password2.value.text.trim().isEmpty()|| password2.value.text.length<8
+                        errorname = name.value.text.trim().isEmpty()
+                        if (!errorpassword && !errorpassword2 && !errorusername && !errorname) {
+                            try {
+                                viewModel.register(
+                                    name.value.text,
+                                    username.value.text,
+                                    password.value.text,
+                                    password2.value.text
+                                )
+                            }catch (e:Exception){
+                                Toasty.error(mContext, e.message.toString(), Toast.LENGTH_SHORT).show()
+                            }
                         } else
-                            Toast.makeText(
+                            Toasty.warning(
                                 mContext,
-                                "Failed, fill it carefully ${username}",
+                                "Failed, fill it carefully",
                                 Toast.LENGTH_SHORT
                             )
                                 .show()
@@ -340,7 +348,13 @@ fun RegisterPage(
                     Text(text = "Register")
                 }
             }
-            Spacer(modifier = Modifier.height(30.dp))
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp),
+                color = Color.Gray,
+                thickness = 2.dp
+            )
 
             Row(modifier = Modifier, horizontalArrangement = Arrangement.Center) {
                 Text(text = "Already have an account? ")

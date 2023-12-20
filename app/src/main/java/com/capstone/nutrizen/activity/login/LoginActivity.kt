@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -60,6 +62,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.R
 import com.capstone.nutrizen.activity.dataform.FormActivity
@@ -69,6 +72,7 @@ import com.capstone.nutrizen.data.Injection
 import com.capstone.nutrizen.data.ViewModelFactory
 import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
+import es.dmoral.toasty.Toasty
 
 class LoginActivity : ComponentActivity() {
     private val viewModel by viewModels<LoginViewModel> {
@@ -76,7 +80,10 @@ class LoginActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        splashScreen.setKeepOnScreenCondition{viewModel.splash.value}
 
         viewModel.getSession().observe(this) { user ->
             if (user.isLogin && user.isDataCompleted) {
@@ -102,9 +109,9 @@ class LoginActivity : ComponentActivity() {
 
         viewModel.loginResponse.observe(this) {
             if (it.error) {
-                Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
+                Toasty.error(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                Toasty.success(this, it.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -165,6 +172,7 @@ fun LoginPage(
                 Text(
                     text = stringResource(id = R.string.app_name),
                     style = TextStyle(fontSize = 50.sp, fontFamily = FontFamily.Serif)
+                    , color = colorResource(id = R.color.greens)
                 )
             }
 
@@ -239,7 +247,7 @@ fun LoginPage(
                 isError = errorpassword,
                 supportingText = {
                     if (errorpassword) {
-                        Text(text = "Please enter your password")
+                        Text(text = "Minimum 8 characters")
                     }
                 }
             )
@@ -248,12 +256,16 @@ fun LoginPage(
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {
-                        errorpassword = password.value.text.isEmpty()
-                        errorusername = username.value.text.isEmpty()
-                        if (errorpassword == false && errorusername == false) {
-                            viewModel.login(username.value.text, password.value.text)
+                        errorpassword = password.value.text.trim().isEmpty()|| password.value.text.length<8
+                        errorusername = username.value.text.trim().isEmpty()
+                        if (!errorpassword && !errorusername) {
+                            try {
+                                viewModel.login(username.value.text, password.value.text)
+                            }catch (e:Exception){
+                                Toasty.error(mContext, e.message.toString(), Toast.LENGTH_SHORT).show()
+                            }
                         } else
-                            Toast.makeText(
+                            Toasty.warning(
                                 mContext,
                                 "Failed, fill it carefully",
                                 Toast.LENGTH_SHORT
@@ -268,7 +280,14 @@ fun LoginPage(
                     Text(text = "Login")
                 }
             }
-            Spacer(modifier = Modifier.height(30.dp))
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp),
+                color = Color.Gray,
+                thickness = 2.dp
+            )
 
             Row(modifier = Modifier, horizontalArrangement = Arrangement.Center) {
                 Text(text = "Don't have an account? ")

@@ -78,6 +78,7 @@ import com.capstone.nutrizen.helper.toFormattedString
 import com.capstone.nutrizen.helper.toMonthName
 import com.capstone.nutrizen.ui.components.Loading
 import com.capstone.nutrizen.ui.theme.NutrizenTheme
+import es.dmoral.toasty.Toasty
 import java.util.Calendar
 import java.util.Date
 
@@ -100,9 +101,9 @@ class FormActivity : ComponentActivity() {
 
                     viewModel.FormResponse.observe(this) {
                         if (it.error) {
-                            Toast.makeText(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
+                            Toasty.error(this, "failed, " + it.message, Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                            Toasty.success(this, it.message, Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
@@ -154,10 +155,11 @@ fun FormPage(
                         .padding(horizontal = 20.dp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onTertiary
                 )
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.tertiary)
         )
 
         if (loading == true) {
@@ -418,7 +420,7 @@ fun FormPage(
                     Modifier
                         .padding(horizontal = 10.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.small
                         )
                         .height(55.dp)
@@ -481,7 +483,7 @@ fun FormPage(
                     Modifier
                         .padding(horizontal = 10.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.small
                         )
                         .height(55.dp)
@@ -652,32 +654,45 @@ fun FormPage(
             }
             Spacer(modifier = Modifier.height(20.dp))
 
+            var iscomplete = false
+            if(genderId!=0 && activityId!=0 && goalId!=0){
+                iscomplete= true
+            }
             Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
                 Button(
                     onClick = {
-                        try {
-                            viewModel.save(
-                                token,
-                                id,
-                                "",
-                                selectedDate.value,
-                                age.value,
-                                genderId,
-                                height.value.text.toDouble(),
-                                weight.value.text.toDouble(),
-                                activityId,
-                                goalId,
-                                email,
-                                name
+                        if(genderId!=0 && activityId!=0 && goalId!=0) {
+                            try {
+                                viewModel.save(
+                                    token,
+                                    id,
+                                    "",
+                                    selectedDate.value,
+                                    age.value,
+                                    genderId,
+                                    height.value.text.toDouble(),
+                                    weight.value.text.toDouble(),
+                                    activityId,
+                                    goalId,
+                                    email,
+                                    name
+                                )
+                            } catch (e: Exception) {
+                                Toasty.error(context, e.message.toString(), Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }else{
+                            Toasty.warning(
+                                context,
+                                "Failed, fill it carefully",
+                                Toast.LENGTH_SHORT
                             )
-                        } catch (e: Exception) {
-                            Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
-                        }
+                                .show()}
                     },
                     shape = RoundedCornerShape(55.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(55.dp)
+                        .height(55.dp),enabled = iscomplete
                 ) {
                     Text(text = "Save")
                 }

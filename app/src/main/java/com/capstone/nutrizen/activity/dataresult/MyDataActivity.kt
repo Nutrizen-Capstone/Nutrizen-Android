@@ -147,9 +147,10 @@ fun MyDataPage(
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Start
+                    , color = MaterialTheme.colorScheme.onTertiary
                 )
             },
-            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primaryContainer)
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.tertiary)
         )
         Column(
             modifier = Modifier
@@ -319,7 +320,7 @@ fun MyDataPage(
                     Modifier
                         .padding(horizontal = 10.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.small
                         )
                         .height(55.dp)
@@ -376,7 +377,7 @@ fun MyDataPage(
                     Modifier
                         .padding(horizontal = 10.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.small
                         )
                         .height(55.dp)
@@ -495,7 +496,7 @@ fun MyDataPage(
                     text = stringResource(id = R.string.reassign),
                     fontSize = 18.sp,
                     modifier = Modifier,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))

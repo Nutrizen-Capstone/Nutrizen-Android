@@ -17,11 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.capstone.nutrizen.R
 import io.jetchart.common.animation.fadeInAnimation
 import io.jetchart.pie.PieChart
 import io.jetchart.pie.Pies
@@ -67,8 +68,8 @@ fun Summary(
             PieChart(
                 pies = Pies(
                     listOf(
-                        Slice(calsConsumedPercent, Color.Blue),
-                        Slice(calsRemainingPercent, Color.Yellow),
+                        Slice(calsConsumedPercent, colorResource(id = R.color.greens)),
+                        Slice(calsRemainingPercent, colorResource(id = R.color.oranges)),
                     )
                 ),
                 modifier = Modifier
@@ -111,14 +112,16 @@ fun Summary(
         Spacer(modifier = Modifier.height(15.dp))
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row {
-                Icon(imageVector = Icons.Default.Circle, tint = Color.Blue, contentDescription = null)
+                Icon(imageVector = Icons.Default.Circle, tint = colorResource(id = R.color.greens), contentDescription = null)
                 Text(
-                    text = "Calory Consumed",
+                    text = "Calories Consumed",
                     modifier = Modifier
                         .padding(horizontal = 10.dp),
                     fontWeight = FontWeight.Normal,
@@ -138,14 +141,16 @@ fun Summary(
         }
         Spacer(modifier = Modifier.height(5.dp))
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row {
-                Icon(imageVector = Icons.Default.Circle, tint = Color.Yellow, contentDescription = null)
+                Icon(imageVector = Icons.Default.Circle, tint = colorResource(id = R.color.oranges), contentDescription = null)
                 Text(
-                    text = "Calory Remaining",
+                    text = "Calories Remaining",
                     modifier = Modifier
                         .padding(horizontal = 10.dp),
                     fontWeight = FontWeight.Normal,

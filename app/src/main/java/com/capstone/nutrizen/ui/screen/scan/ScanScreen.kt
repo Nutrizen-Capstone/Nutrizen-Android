@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -72,11 +71,11 @@ fun ScanScreen(
                     .height(200.dp)
                     .width(200.dp)
                     .padding(vertical = 10.dp),
+                tint = MaterialTheme.colorScheme.tertiary
             )
 
             Text(
                 text = stringResource(id = R.string.scan_description),
-                color = Color.DarkGray,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
             )
@@ -100,7 +99,7 @@ fun ScanScreen(
             Box(
                 modifier = Modifier
                     .padding(10.dp)
-                    .background(color = MaterialTheme.colorScheme.primaryContainer, shape = MaterialTheme.shapes.small)
+                    .background(color = MaterialTheme.colorScheme.secondaryContainer, shape = MaterialTheme.shapes.small)
             ) {
                 Column(
                     modifier = Modifier
