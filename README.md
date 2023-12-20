@@ -1,7 +1,5 @@
 # Nutrizen Android App
 
-![Nutrizen Logo](app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png)
-
 Nutrizen is a mobile application developed as a capstone project by our team in the Bangkit Academy program. It empowers users to scan food items for caloric information and track their daily caloric intake.
 
 ## Features
