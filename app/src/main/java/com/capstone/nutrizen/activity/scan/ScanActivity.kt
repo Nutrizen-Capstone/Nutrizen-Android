@@ -345,7 +345,7 @@ fun ScanPage(
                             modifier = Modifier
                                 .padding(horizontal = 10.dp),
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 20.sp,
+                            fontSize = 17.sp,
                             textAlign = TextAlign.Start
                         )
                     }

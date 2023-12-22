@@ -26,6 +26,9 @@ data class HistoryItem(
 	@field:SerializedName("date")
 	val date: String,
 
+	@field:SerializedName("timestamp")
+	val timeStamp: String,
+
 	@field:SerializedName("createdAt")
 	val createdAt: String,
 

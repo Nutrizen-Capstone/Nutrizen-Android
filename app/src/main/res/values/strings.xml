@@ -60,7 +60,7 @@
     <string name="reassign">Re-Assign Data Form</string>
     <string name="btn_camera">Camera</string>
     <string name="btn_gallery">Gallery</string>
-    <string name="btn_toAdd">"Add to Food Diary "</string>
+    <string name="btn_toAdd">"Add to the Food Diary "</string>
     <string name="form_description">Please fill this form to calculate your daily Calories needs and BMI score.</string>
     <string name="scan_description">Scan your food image! Powered by Artificial Intelegence</string>
     <string name="btn_toScan">Scan it now !</string>
@@ -81,6 +81,9 @@
     <string name="custom_description">Custom your food calories data and add it to the Food Diary</string>
     <string name="form_food">Name of Food</string>
     <string name="form_calorie">"Calories/100g "</string>
-    <string name="custom_alert">***You can find calories/100 g (serving) by googling it, read reference or nutrition facts of product</string>
+    <string name="custom_alert">***You can find calories/100 g (serving) by googling it, read reference or read nutrition facts on the product label</string>
     <string name="btn_catalog">Dietary Supplement Catalog</string>
+    <string name="catalog_desc1">1. B2B, partnering with dietary supplement company to advertising and suggest their product on the dietary supplement catalog.</string>
+    <string name="catalog_desc2">2. Subscription for several special feature, such as food recipe recommendation, tons of food calories database to be selected simply on the custom food menu, nutrition consultation, etc.</string>
+    <string name="title_catalog">Dietary Supplement Catalog</string>
 </resources>

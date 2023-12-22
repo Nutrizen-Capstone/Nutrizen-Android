@@ -88,8 +88,6 @@ fun HistoryScreen(
     var goalId = 0
     var bmr = 0.0
     var calorieNeeds = 0.0
-    var calsConsumed = 0
-    var calsRemaining = 0
     viewModel.getSession().observeAsState().value?.let { its ->
         token = its.token
         id = its.id
@@ -122,6 +120,7 @@ fun HistoryScreen(
             3 -> bmr + 500
             else -> bmr
         }
+    val currentDate = Date().toSimpleString()
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -141,7 +140,6 @@ fun HistoryScreen(
         )
         val interactionSource = remember { MutableInteractionSource() }
         val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-        val currentDate = Date().toSimpleString()
         var selectedDate = remember { mutableStateOf(currentDate) }
         val calendar = Calendar.getInstance()
         val year: Int = calendar.get(Calendar.YEAR)
@@ -246,7 +244,7 @@ fun HistoryScreen(
                                         .width(150.dp),
                                     imageVector = Icons.Default.SearchOff,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary
+                                    tint = MaterialTheme.colorScheme.tertiary
                                 )
                                 Text(text = "Data Not Found", fontSize = 15.sp)
 
@@ -351,17 +349,23 @@ fun HistoryContent(
                     )
                 }
             }
+
             items(list) { data ->
 
                 var showDialog by remember { mutableStateOf(false) }
-
                 if (showDialog) {
                     AlertDialog(
                         onDismissRequest = { showDialog = false },
                         title = { Text("Are you sure you want to delete this?") },
                         text = { Text("This action cannot be undone") },
                         confirmButton = {
-                            TextButton(onClick = { Toasty.info(context,data.historyId, Toast.LENGTH_SHORT).show()} ) {
+                            TextButton(onClick = {
+                                showDialog = false
+                                viewModel.deleteHistory(token,data.historyId)
+                                Toasty.success(context,"success", Toast.LENGTH_SHORT).show()
+                                viewModel.getHistory(token,id,data.date)
+                            }
+                            ) {
                                 Text("Delete it".uppercase())
                             }
                         },
@@ -372,6 +376,7 @@ fun HistoryContent(
                         },
                     )
                 }
+
                 HistoryItem(
                     food = data.nameFood,
                     time = data.eatTime,
@@ -379,7 +384,7 @@ fun HistoryContent(
                     cals = data.calorie,
                     portion = data.portion,
                     total = data.total,
-                    createdAt = data.createdAt,
+                    createdAt = data.timeStamp,
                     modifier = Modifier.clickable {  showDialog = showDialog.not() }
                 )
             }

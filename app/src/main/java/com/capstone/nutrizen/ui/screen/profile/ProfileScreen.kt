@@ -18,12 +18,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocalGroceryStore
 import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capstone.nutrizen.R
+import com.capstone.nutrizen.activity.catalog.CatalogActivity
 import com.capstone.nutrizen.activity.dataresult.MyDataActivity
 import com.capstone.nutrizen.activity.login.LoginActivity
 import com.capstone.nutrizen.data.Injection
@@ -69,25 +70,25 @@ fun ProfileScreen(
 ) {
     var name: String = ""
     var email: String = ""
-    var birth: String = ""
-    var age: Int = 0
     var token: String = ""
-    var gender: Int = 0
-    var height: Double = 0.0
-    var weight: Double = 0.0
-    var activitys: Int = 0
-    var goal: Int = 0
+    var userId: String = ""
+
     viewModel.getSession().observeAsState().value?.let { its ->
         name = its.name
         email = its.email
-        birth = its.birthDate
-        age = its.age
-        gender = its.gender
-        height = its.height
-        weight = its.weight
-        activitys = its.activity
-        goal = its.goal
+        userId = its.id
         token = its.token
+    }
+
+    viewModel.deleteResponse.observeAsState().value?.let {
+        if (it.error){
+            Toasty.error(LocalContext.current,it.message,Toast.LENGTH_SHORT).show()
+        }else{
+            Toasty.success(LocalContext.current,it.message,Toast.LENGTH_SHORT).show()
+            viewModel.logout()
+            context.startActivity(Intent(context, LoginActivity::class.java))
+            activity.finish()
+        }
     }
 
     Column(
@@ -115,11 +116,12 @@ fun ProfileScreen(
             verticalArrangement = Arrangement.Top
         ) {
             Icon(
-                imageVector = Icons.Outlined.AccountCircle,
+                imageVector = Icons.Default.AccountCircle,
                 contentDescription = "icon",
                 modifier = modifier
                     .height(150.dp)
                     .width(150.dp),
+                tint = MaterialTheme.colorScheme.tertiary,
             )
             Text(
                 text = name,
@@ -185,9 +187,7 @@ fun ProfileScreen(
                     .height(50.dp)
                     .width(350.dp)
                     .clickable(onClick = {
-                        Toasty
-                            .info(context, "Coming soon", Toast.LENGTH_SHORT)
-                            .show()
+                        context.startActivity(Intent(context, CatalogActivity::class.java))
                     })
                     .background(
                         color = MaterialTheme.colorScheme.primary,
@@ -220,7 +220,7 @@ fun ProfileScreen(
                         title = { Text("Are you sure you want to delete this account?") },
                         text = { Text("This action cannot be undone") },
                         confirmButton = {
-                            TextButton(onClick = { /* TODO */}) {
+                            TextButton(onClick = { viewModel.deleteUser(token,userId)}) {
                                 Text("Delete it".uppercase())
                             }
                         },

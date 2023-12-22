@@ -46,6 +46,12 @@ class Repository private constructor(
     suspend fun getHistory(token: String, id: String, date: String) =
         ApiConfig.getApiToken(token).getHistory(id, date)
 
+    suspend fun deleteHistory(token: String, historyId: String) =
+        ApiConfig.getApiToken(token).deleteHistory(historyId)
+
+    suspend fun deleteUser(token: String, userId: String) =
+        ApiConfig.getApiToken(token).deleteUser(userId)
+
 
     //repository for preference of session
     suspend fun saveSession(user: SessionModel) {

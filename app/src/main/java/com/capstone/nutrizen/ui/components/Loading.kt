@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -58,7 +59,8 @@ fun Loading(
                 )
                 Text(
                     text = stringResource(id = R.string.app_name),
-                    style = TextStyle(fontSize = 50.sp, fontFamily = FontFamily.Serif)
+                    style = TextStyle(fontSize = 50.sp, fontFamily = FontFamily.Serif,),
+                    color = colorResource(id = R.color.greens),
                 )
             }
             Text(
@@ -70,7 +72,7 @@ fun Loading(
             )
             CircularProgressIndicator(
                 modifier = Modifier.width(64.dp),
-                color = MaterialTheme.colorScheme.secondary,
+                color = colorResource(id = R.color.greens),
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
             )
         }

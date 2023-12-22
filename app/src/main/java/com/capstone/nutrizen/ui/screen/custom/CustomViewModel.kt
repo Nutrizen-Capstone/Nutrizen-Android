@@ -13,10 +13,6 @@ import kotlinx.coroutines.launch
 
 class CustomViewModel(private val repository: Repository) : ViewModel() {
 
-    companion object {
-        private const val TAG = "AddViewModel"
-    }
-
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
@@ -46,6 +42,10 @@ class CustomViewModel(private val repository: Repository) : ViewModel() {
     }
     fun getSession(): LiveData<SessionModel> {
         return repository.getSession().asLiveData()
+    }
+
+    companion object {
+        private const val TAG = "CustomViewModel"
     }
 
 }

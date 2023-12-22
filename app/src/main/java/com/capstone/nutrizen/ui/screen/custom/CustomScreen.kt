@@ -43,7 +43,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -104,6 +103,13 @@ fun CustomScreen(
                 textAlign = TextAlign.Center
             )
         })
+        var loading by remember { mutableStateOf(false) }
+        viewModel.isLoading.observeAsState().value?.let {
+            loading = it
+        }
+        if (loading == true) {
+            Loading(modifier = Modifier)
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -113,14 +119,6 @@ fun CustomScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-
-            var loading by remember { mutableStateOf(false) }
-            viewModel.isLoading.observeAsState().value?.let {
-                loading = it
-            }
-            if (loading == true) {
-                Loading(modifier = Modifier)
-            }
 
             Icon(
                 imageVector = Icons.Outlined.Dining,

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -21,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -83,7 +83,8 @@ fun HistoryItem(
             Icon(
                 modifier = Modifier
                     .height(30.dp)
-                    .width(30.dp).padding(horizontal = 5.dp),
+                    .width(30.dp)
+                    .padding(horizontal = 5.dp),
                 imageVector = Icons.Default.Fastfood,
                 contentDescription = null
             )
@@ -117,7 +118,13 @@ fun HistoryItem(
             Text(text = "Total Calories", fontStyle= FontStyle.Italic, )
             Text(text = total.toString())
         }
-        Text(modifier= Modifier.fillMaxWidth().padding(3.dp),text = createdAt, fontSize = 10.sp, fontStyle= FontStyle.Italic, textAlign = TextAlign.End )
+        Row(modifier = Modifier.fillMaxWidth().padding(4.dp), horizontalArrangement = Arrangement.SpaceBetween){
+            Row {
+                Icon(modifier= Modifier.height(12.dp).width(12.dp),imageVector = Icons.Default.DeleteOutline, contentDescription = null)
+                Text(text = "Tap to delete", fontSize = 10.sp, fontStyle= FontStyle.Italic, )
+            }
+            Text(modifier= Modifier,text = createdAt, fontSize = 10.sp, fontStyle= FontStyle.Italic )
+        }
 
     }
 }

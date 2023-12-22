@@ -1,6 +1,8 @@
 package com.capstone.nutrizen.data.retrofit
 
 import com.capstone.nutrizen.data.retrofit.response.AddHistoryResponse
+import com.capstone.nutrizen.data.retrofit.response.DeleteHistoryResponse
+import com.capstone.nutrizen.data.retrofit.response.DeleteUserResponse
 import com.capstone.nutrizen.data.retrofit.response.GetHistoryResponse
 import com.capstone.nutrizen.data.retrofit.response.LoginResponse
 import com.capstone.nutrizen.data.retrofit.response.PersonalDataResponse
@@ -64,11 +66,15 @@ interface ApiService {
     ): GetHistoryResponse
 
     @FormUrlEncoded
-    @POST("scanHistory")
+    @POST("scanHistory/delete")
     suspend fun deleteHistory(
+        @Field("historyId") id: String,
+    ): DeleteHistoryResponse
+
+    @FormUrlEncoded
+    @POST("users/delete")
+    suspend fun deleteUser(
         @Field("userId") id: String,
-        @Field("date") date: String,
-    ): GetHistoryResponse
-    
+    ): DeleteUserResponse
 
 }
