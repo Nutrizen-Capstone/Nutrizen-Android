@@ -18,7 +18,7 @@ Nutrizen is a mobile application developed as a capstone project by our team in 
 
 To run the Nutrizen Android app, ensure that your device meets the following requirements:
 
-- Android device running Android 5.0 (Lollipop) or newer
+- Android 9 (Pie)/ min SDK 28 or newer
 - [Download the latest APK from the Releases section](https://github.com/Nutrizen-Capstone/Nutrizen-Android/releases) or Download https://drive.google.com/file/d/1ED5DlmtA4CkXIsBFqLblHG2Zw6sPRVi8/view?usp=drive_link
 
 ## How to Build and Run
